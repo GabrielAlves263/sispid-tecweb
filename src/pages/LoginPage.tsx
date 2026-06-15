@@ -18,9 +18,9 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#F3F6F9] p-4">
+    <main className="flex min-h-screen items-center justify-center bg-page-bg p-4">
       
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-card">
         
         <header className="mb-8 flex flex-col items-center text-center">
           <img 
@@ -68,7 +68,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="mt-2 w-full rounded-lg bg-[#1D4ED8] py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-2 w-full rounded-lg bg-button-primary py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoading ? "Entrando..." : "Entrar"}
           </button>

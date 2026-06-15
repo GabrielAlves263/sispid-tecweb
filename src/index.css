@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --color-page-bg: #F3F6F9;
+    --color-button-primary: #1D4ED8;
+    --shadow-card: 0 8px 30px rgb(0, 0, 0, 0.04);
+  }
+}

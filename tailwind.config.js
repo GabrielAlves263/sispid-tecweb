@@ -5,7 +5,19 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        page: {
+          bg: 'var(--color-page-bg)',
+        },
+        button: {
+          primary: 'var(--color-button-primary)',
+        },
+      },
+      boxShadow: {
+        card: 'var(--shadow-card)',
+      },
+    },
   },
   plugins: [],
 }

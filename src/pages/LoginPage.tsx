@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import InputField from "../components/InputField";
+import { login } from "../services/authService";
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -12,9 +13,15 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
 
-    console.log('Tentativa de login:', { username, password });
-
-    setIsLoading(false);
+    try {
+      const response = await login({ username, password });
+      localStorage.setItem("token", response.token);
+      console.log("Login bem-sucedido:", response.user.nome);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao fazer login");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

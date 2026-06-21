@@ -5,6 +5,7 @@ import HomePage from "./pages/Home";
 import InserirMonitorVoluntarioPage from "./pages/InserirMonitorVoluntario";
 import InserirDisciplinaPage from "./pages/InserirDisciplina";
 import InserirOrientadorPage from "./pages/InserirOrientador";
+import DesligamentoMonitorPage from "./pages/DesligamentoMonitor";
 
 export default function App() {
 	return (
@@ -15,6 +16,7 @@ export default function App() {
 				<Route path="/ins-mon-vol" element={<InserirMonitorVoluntarioPage />} />
 				<Route path="/ins-disciplina" element={<InserirDisciplinaPage />} />
 				<Route path="/ins-orientador" element={<InserirOrientadorPage />} />
+				<Route path="/desligamento-monitor" element={<DesligamentoMonitorPage />} />
 			</Route>
 		</Routes>
 	);

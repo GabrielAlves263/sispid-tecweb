@@ -88,7 +88,7 @@ export default function DesligamentoMonitorPage() {
             />
           </Field>
 
-          <Field label="Monitor" span={1}>
+          <Field label="Monitor" hint="Selecione o monitor a ser desligado" span={1}>
             <select style={styles.input} value={form.monitor} onChange={set("monitor")}>
               {MONITORES_MOCK.map((m) => (
                 <option key={m.value} value={m.value}>

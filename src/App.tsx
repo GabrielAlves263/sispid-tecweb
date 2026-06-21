@@ -6,6 +6,7 @@ import InserirMonitorVoluntarioPage from "./pages/InserirMonitorVoluntario";
 import InserirDisciplinaPage from "./pages/InserirDisciplina";
 import InserirOrientadorPage from "./pages/InserirOrientador";
 import DesligamentoMonitorPage from "./pages/DesligamentoMonitor";
+import FrequenciaMensal from "./pages/FrequenciaMonitor";
 
 export default function App() {
 	return (
@@ -17,6 +18,7 @@ export default function App() {
 				<Route path="/ins-disciplina" element={<InserirDisciplinaPage />} />
 				<Route path="/ins-orientador" element={<InserirOrientadorPage />} />
 				<Route path="/desligamento-monitor" element={<DesligamentoMonitorPage />} />
+				<Route path="/frequencia-monitor" element={<FrequenciaMensal />} />
 			</Route>
 		</Routes>
 	);

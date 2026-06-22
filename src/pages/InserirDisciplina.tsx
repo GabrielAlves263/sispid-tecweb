@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { CSSProperties, ChangeEvent } from "react";
+import { inserirDisciplina } from "../services/disciplinaService";
 
 interface FormData {
 	monitor: string;
@@ -38,6 +39,9 @@ function Field({
 }
 
 export default function InserirDisciplinaPage() {
+	const [isLoading, setIsLoading] = useState(false);
+	const [success, setSuccess] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>(null);
 	const [form, setForm] = useState<FormData>({
 		monitor: "",
 		codigoDisciplina: "",
@@ -48,8 +52,19 @@ export default function InserirDisciplinaPage() {
 		(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
 			setForm((f) => ({ ...f, [key]: e.target.value }));
 
-	const handleSubmit = () => {
-		console.log("Disciplina inserida:", form);
+	const handleSubmit = async () => {
+		setSuccess(null);
+		setError(null);
+		setIsLoading(true);
+
+		try {
+			await inserirDisciplina({ monitorId: form.monitor, codigoDisciplina: form.codigoDisciplina });
+			setSuccess("Disciplina inserida com sucesso!");
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "Erro ao inserir disciplina");
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	return (
@@ -84,6 +99,9 @@ export default function InserirDisciplinaPage() {
 				</div>
 			</div>
 
+			{error && <div style={styles.msgBox}>{error}</div>}
+			{success && <div style={{ ...styles.msgBox, background: "#f0fdf4", borderColor: "#4ade80", color: "#166534" }}>{success}</div>}
+
 			<div style={styles.submitRow}>
 				<button
 					style={styles.cancelBtn}
@@ -91,8 +109,8 @@ export default function InserirDisciplinaPage() {
 				>
 					Limpar
 				</button>
-				<button style={styles.submitBtn} onClick={handleSubmit}>
-					✅ Inserir disciplina
+				<button style={styles.submitBtn} onClick={handleSubmit} disabled={isLoading}>
+					{isLoading ? "Enviando..." : "✅ Inserir disciplina"}
 				</button>
 			</div>
 		</div>
@@ -163,6 +181,14 @@ const styles: Record<string, CSSProperties> = {
 		outline: "none",
 		width: "100%",
 		boxSizing: "border-box",
+	},
+	msgBox: {
+		background: "#fef2f2",
+		border: "0.5px solid #f87171",
+		borderRadius: 8,
+		padding: "12px 16px",
+		fontSize: 13,
+		color: "#991b1b",
 	},
 	submitRow: {
 		display: "flex",

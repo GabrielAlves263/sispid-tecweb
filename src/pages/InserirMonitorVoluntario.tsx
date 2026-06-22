@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { CSSProperties, ChangeEvent } from "react";
+import { inserirMonitorVoluntario } from "../services/monitorService";
 
 interface FormData {
   matriculaConsulta: string;
@@ -92,6 +93,9 @@ function FileUpload({
 }
 
 export default function InserirMonitorVoluntarioPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState<FormData>({
     matriculaConsulta: "",
     periodoInicio: "2026-05-01",
@@ -127,8 +131,19 @@ export default function InserirMonitorVoluntarioPage() {
   const setFile = (key: keyof FormData) => (file: File | null) =>
     setForm((f) => ({ ...f, [key]: file }));
 
-  const handleSubmit = () => {
-    console.log("Formulário enviado:", form);
+  const handleSubmit = async () => {
+    setSuccess(null);
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      await inserirMonitorVoluntario(form);
+      setSuccess("Monitor voluntário inserido com sucesso!");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao inserir monitor");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -277,10 +292,14 @@ export default function InserirMonitorVoluntarioPage() {
         </div>
       </div>
 
+      {/* Mensagens */}
+      {error && <div style={styles.errorMsg}>{error}</div>}
+      {success && <div style={styles.successMsg}>{success}</div>}
+
       {/* Botão enviar */}
       <div style={styles.submitRow}>
-        <button style={styles.submitBtn} onClick={handleSubmit}>
-          ✅ Inserir monitor voluntário
+        <button style={styles.submitBtn} onClick={handleSubmit} disabled={isLoading}>
+          {isLoading ? "Enviando..." : "✅ Inserir monitor voluntário"}
         </button>
       </div>
     </div>
@@ -423,6 +442,22 @@ const styles: Record<string, CSSProperties> = {
     fontSize: 12,
     color: "#6b7f94",
     whiteSpace: "nowrap",
+  },
+  errorMsg: {
+    background: "#fef2f2",
+    border: "0.5px solid #f87171",
+    borderRadius: 8,
+    padding: "12px 16px",
+    fontSize: 13,
+    color: "#991b1b",
+  },
+  successMsg: {
+    background: "#f0fdf4",
+    border: "0.5px solid #4ade80",
+    borderRadius: 8,
+    padding: "12px 16px",
+    fontSize: 13,
+    color: "#166534",
   },
   submitRow: {
     display: "flex",

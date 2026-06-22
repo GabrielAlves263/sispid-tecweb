@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { CSSProperties, ChangeEvent } from "react";
+import { inserirOrientador } from "../services/orientadorService";
 
 interface FormData {
   cpfConsulta: string;
@@ -45,6 +46,9 @@ function Field({
 }
 
 export default function InserirOrientadorPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState<FormData>({
     cpfConsulta: "",
     monitor: "",
@@ -64,8 +68,26 @@ export default function InserirOrientadorPage() {
     console.log("Consultando CPF:", form.cpfConsulta);
   };
 
-  const handleSubmit = () => {
-    console.log("Orientador inserido:", form);
+  const handleSubmit = async () => {
+    setSuccess(null);
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      await inserirOrientador({
+        monitorId: form.monitor,
+        cpf: form.cpf,
+        nome: form.nome,
+        email: form.email,
+        telefone: form.telefone,
+        unidadeAcademica: form.unidadeAcademica,
+      });
+      setSuccess("Orientador inserido com sucesso!");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao inserir orientador");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleLimpar = () => {
@@ -165,13 +187,17 @@ export default function InserirOrientadorPage() {
         </div>
       </div>
 
+      {/* Mensagens */}
+      {error && <div style={styles.msgBox}>{error}</div>}
+      {success && <div style={{ ...styles.msgBox, background: "#f0fdf4", borderColor: "#4ade80", color: "#166534" }}>{success}</div>}
+
       {/* Botões */}
       <div style={styles.submitRow}>
         <button style={styles.cancelBtn} onClick={handleLimpar}>
           Limpar
         </button>
-        <button style={styles.submitBtn} onClick={handleSubmit}>
-          ✅ Inserir orientador
+        <button style={styles.submitBtn} onClick={handleSubmit} disabled={isLoading}>
+          {isLoading ? "Enviando..." : "✅ Inserir orientador"}
         </button>
       </div>
     </div>
@@ -258,6 +284,14 @@ const styles: Record<string, CSSProperties> = {
     fontWeight: 500,
     cursor: "pointer",
     whiteSpace: "nowrap",
+  },
+  msgBox: {
+    background: "#fef2f2",
+    border: "0.5px solid #f87171",
+    borderRadius: 8,
+    padding: "12px 16px",
+    fontSize: 13,
+    color: "#991b1b",
   },
   submitRow: {
     display: "flex",

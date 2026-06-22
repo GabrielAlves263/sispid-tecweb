@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { CSSProperties, ChangeEvent } from "react";
+import { inserirDesligamento } from "../services/desligamentoService";
 
 interface FormData {
   dataDesligamento: string;
@@ -54,6 +55,9 @@ function Field({
 }
 
 export default function DesligamentoMonitorPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState<FormData>({
     dataDesligamento: "2026-03-31",
     monitor: "",
@@ -69,8 +73,24 @@ export default function DesligamentoMonitorPage() {
   const handleLimpar = () =>
     setForm({ dataDesligamento: "2026-03-31", monitor: "", tipo: "", motivo: "" });
 
-  const handleSubmit = () => {
-    console.log("Desligamento solicitado:", form);
+  const handleSubmit = async () => {
+    setSuccess(null);
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      await inserirDesligamento({
+        dataDesligamento: form.dataDesligamento,
+        monitorId: form.monitor,
+        tipo: form.tipo,
+        motivo: form.motivo,
+      });
+      setSuccess("Desligamento registrado com sucesso!");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao registrar desligamento");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -128,13 +148,17 @@ export default function DesligamentoMonitorPage() {
         </span>
       </div>
 
+      {/* Mensagens */}
+      {error && <div style={styles.msgBox}>{error}</div>}
+      {success && <div style={{ ...styles.msgBox, background: "#f0fdf4", borderColor: "#4ade80", color: "#166534" }}>{success}</div>}
+
       {/* Botões */}
       <div style={styles.submitRow}>
         <button style={styles.cancelBtn} onClick={handleLimpar}>
           Limpar
         </button>
-        <button style={styles.submitBtn} onClick={handleSubmit}>
-          ✅ Confirmar desligamento
+        <button style={styles.submitBtn} onClick={handleSubmit} disabled={isLoading}>
+          {isLoading ? "Enviando..." : "✅ Confirmar desligamento"}
         </button>
       </div>
     </div>
@@ -241,6 +265,14 @@ const styles: Record<string, CSSProperties> = {
     fontSize: 13,
     color: "#7a5c00",
     lineHeight: 1.5,
+  },
+  msgBox: {
+    background: "#fef2f2",
+    border: "0.5px solid #f87171",
+    borderRadius: 8,
+    padding: "12px 16px",
+    fontSize: 13,
+    color: "#991b1b",
   },
   submitRow: {
     display: "flex",

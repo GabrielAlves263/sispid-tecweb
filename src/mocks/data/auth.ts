@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw"
 import type { LoginRequest } from "../../types/user"
-import { mockUsers } from "../data/users"
+import { mockUsers } from "./users"
 
 export const authHandlers = [
   http.post<never, LoginRequest>("/api/auth/login", async ({ request }) => {

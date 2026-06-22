@@ -1,8 +1,10 @@
 import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import InputField from "../components/InputField";
 import { login } from "../services/authService";
 
 export default function LoginPage() {
+	const navigate = useNavigate();
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +18,7 @@ export default function LoginPage() {
 		try {
 			const response = await login({ username, password });
 			localStorage.setItem("token", response.token);
-			console.log("Login bem-sucedido:", response.user.nome);
+			navigate("/");
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Erro ao fazer login");
 		} finally {

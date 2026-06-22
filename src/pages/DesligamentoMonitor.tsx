@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { CSSProperties, ChangeEvent } from "react";
+import { inserirDesligamento } from "../services/desligamentoService";
+import { required } from "../utils/validators";
 
 interface FormData {
   dataDesligamento: string;
@@ -54,8 +56,14 @@ function Field({
 }
 
 export default function DesligamentoMonitorPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const topRef = useRef<HTMLDivElement>(null);
   const [form, setForm] = useState<FormData>({
-    dataDesligamento: "2026-03-31",
+    dataDesligamento: "",
     monitor: "",
     tipo: "",
     motivo: "",
@@ -69,8 +77,53 @@ export default function DesligamentoMonitorPage() {
   const handleLimpar = () =>
     setForm({ dataDesligamento: "2026-03-31", monitor: "", tipo: "", motivo: "" });
 
-  const handleSubmit = () => {
-    console.log("Desligamento solicitado:", form);
+  const validate = (): boolean => {
+    const errors: string[] = [];
+
+    const fields: [string, string][] = [
+      ["dataDesligamento", "Data de desligamento"],
+      ["monitor", "Monitor"],
+      ["tipo", "Tipo de desligamento"],
+      ["motivo", "Motivo"],
+    ];
+
+    for (const [key, label] of fields) {
+      const err = required(form[key as keyof typeof form] as string, label);
+      if (err) errors.push(err);
+    }
+
+    setValidationErrors(errors);
+    return errors.length === 0;
+  };
+
+  const handleConfirmClick = () => {
+    setValidationErrors([]);
+    if (!validate()) {
+      setTimeout(() => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+      return;
+    }
+    setShowConfirmModal(true);
+  };
+
+  const handleSubmit = async () => {
+    setShowConfirmModal(false);
+    setSuccess(null);
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      await inserirDesligamento({
+        dataDesligamento: form.dataDesligamento,
+        monitorId: form.monitor,
+        tipo: form.tipo,
+        motivo: form.motivo,
+      });
+      setSuccess("Desligamento registrado com sucesso!");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao registrar desligamento");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -128,22 +181,62 @@ export default function DesligamentoMonitorPage() {
         </span>
       </div>
 
+      {/* Mensagens */}
+      <div ref={topRef} />
+      {validationErrors.length > 0 && (
+        <div style={styles.msgBox}>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>
+            {validationErrors.length} erro(s) encontrado(s):
+          </div>
+          {validationErrors.slice(0, 5).map((e, i) => (
+            <div key={i} style={{ marginLeft: 12 }}>&bull; {e}</div>
+          ))}
+          {validationErrors.length > 5 && (
+            <div style={{ marginLeft: 12, marginTop: 4 }}>
+              e mais {validationErrors.length - 5} erro(s).
+            </div>
+          )}
+        </div>
+      )}
+      {error && <div style={styles.msgBox}>{error}</div>}
+      {success && <div style={{ ...styles.msgBox, background: "#f0fdf4", borderColor: "#4ade80", color: "#166534" }}>{success}</div>}
+
       {/* Botões */}
       <div style={styles.submitRow}>
         <button style={styles.cancelBtn} onClick={handleLimpar}>
           Limpar
         </button>
-        <button style={styles.submitBtn} onClick={handleSubmit}>
-          ✅ Confirmar desligamento
+        <button style={styles.submitBtn} onClick={handleConfirmClick} disabled={isLoading}>
+          {isLoading ? "Enviando..." : "Confirmar desligamento"}
         </button>
       </div>
+
+      {/* Modal de confirmação */}
+      {showConfirmModal && (
+        <div style={styles.overlay}>
+          <div style={styles.modal}>
+            <div style={styles.modalIcon}>⚠️</div>
+            <h3 style={styles.modalTitle}>Confirmar desligamento</h3>
+            <p style={styles.modalText}>
+              Tem certeza que deseja desligar este monitor? Esta ação é irreversível.
+            </p>
+            <div style={styles.modalActions}>
+              <button style={styles.cancelBtn} onClick={() => setShowConfirmModal(false)}>
+                Cancelar
+              </button>
+              <button style={styles.submitBtn} onClick={handleSubmit}>
+                Sim, confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 const styles: Record<string, CSSProperties> = {
   page: {
-    background: "#f0f4f8",
     minHeight: "100vh",
     padding: "32px 24px 48px",
     display: "flex",
@@ -241,6 +334,53 @@ const styles: Record<string, CSSProperties> = {
     fontSize: 13,
     color: "#7a5c00",
     lineHeight: 1.5,
+  },
+  overlay: {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0,0,0,0.45)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1000,
+  },
+  modal: {
+    background: "#fff",
+    borderRadius: 16,
+    padding: "32px 36px",
+    maxWidth: 420,
+    width: "90%",
+    textAlign: "center",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.18)",
+  },
+  modalIcon: {
+    fontSize: 36,
+    marginBottom: 12,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 700,
+    color: "#1a3a5c",
+    margin: "0 0 8px",
+  },
+  modalText: {
+    fontSize: 14,
+    color: "#6b7f94",
+    lineHeight: 1.5,
+    margin: "0 0 24px",
+  },
+  modalActions: {
+    display: "flex",
+    justifyContent: "center",
+    gap: 12,
+  },
+  msgBox: {
+    background: "#fef2f2",
+    border: "0.5px solid #f87171",
+    borderRadius: 8,
+    padding: "12px 16px",
+    fontSize: 13,
+    color: "#991b1b",
   },
   submitRow: {
     display: "flex",

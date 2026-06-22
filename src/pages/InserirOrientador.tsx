@@ -1,5 +1,7 @@
 import { useState } from "react";
 import type { CSSProperties, ChangeEvent } from "react";
+import { inserirOrientador } from "../services/orientadorService";
+import { required, isEmail, isCpf } from "../utils/validators";
 
 interface FormData {
   cpfConsulta: string;
@@ -45,6 +47,10 @@ function Field({
 }
 
 export default function InserirOrientadorPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [form, setForm] = useState<FormData>({
     cpfConsulta: "",
     monitor: "",
@@ -64,8 +70,57 @@ export default function InserirOrientadorPage() {
     console.log("Consultando CPF:", form.cpfConsulta);
   };
 
-  const handleSubmit = () => {
-    console.log("Orientador inserido:", form);
+  const validate = (): boolean => {
+    const errors: string[] = [];
+
+    const fields: [string, string][] = [
+      ["monitor", "Monitor"],
+      ["cpf", "CPF"],
+      ["nome", "Nome"],
+      ["email", "E-mail"],
+      ["telefone", "Telefone"],
+      ["unidadeAcademica", "Unidade acadêmica"],
+    ];
+
+    for (const [key, label] of fields) {
+      const err = required(form[key as keyof typeof form] as string, label);
+      if (err) errors.push(err);
+    }
+
+    const emailErr = isEmail(form.email);
+    if (emailErr) errors.push(emailErr);
+
+    const cpfErr = isCpf(form.cpf);
+    if (cpfErr) errors.push(cpfErr);
+
+    setValidationErrors(errors);
+    return errors.length === 0;
+  };
+
+  const handleSubmit = async () => {
+    setSuccess(null);
+    setError(null);
+    setValidationErrors([]);
+
+    if (!validate()) return;
+
+    setIsLoading(true);
+
+    try {
+      await inserirOrientador({
+        monitorId: form.monitor,
+        cpf: form.cpf,
+        nome: form.nome,
+        email: form.email,
+        telefone: form.telefone,
+        unidadeAcademica: form.unidadeAcademica,
+      });
+      setSuccess("Orientador inserido com sucesso!");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao inserir orientador");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleLimpar = () => {
@@ -98,7 +153,7 @@ export default function InserirOrientadorPage() {
             />
           </div>
           <button style={styles.searchBtn} onClick={handleConsultar}>
-            🔍 Consultar
+            Consultar
           </button>
         </div>
       </div>
@@ -131,6 +186,7 @@ export default function InserirOrientadorPage() {
             <input
               style={styles.input}
               type="text"
+              placeholder="Nome completo do orientador"
               value={form.nome}
               onChange={set("nome")}
             />
@@ -140,6 +196,7 @@ export default function InserirOrientadorPage() {
             <input
               style={styles.input}
               type="email"
+              placeholder="orientador@email.com"
               value={form.email}
               onChange={set("email")}
             />
@@ -149,6 +206,7 @@ export default function InserirOrientadorPage() {
             <input
               style={styles.input}
               type="text"
+              placeholder="(00) 00000-0000"
               value={form.telefone}
               onChange={set("telefone")}
             />
@@ -158,6 +216,7 @@ export default function InserirOrientadorPage() {
             <input
               style={styles.input}
               type="text"
+              placeholder="Ex: Centro de Ciências"
               value={form.unidadeAcademica}
               onChange={set("unidadeAcademica")}
             />
@@ -165,13 +224,32 @@ export default function InserirOrientadorPage() {
         </div>
       </div>
 
+      {/* Mensagens */}
+      {validationErrors.length > 0 && (
+        <div style={styles.msgBox}>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>
+            {validationErrors.length} erro(s) encontrado(s):
+          </div>
+          {validationErrors.slice(0, 5).map((e, i) => (
+            <div key={i} style={{ marginLeft: 12 }}>&bull; {e}</div>
+          ))}
+          {validationErrors.length > 5 && (
+            <div style={{ marginLeft: 12, marginTop: 4 }}>
+              e mais {validationErrors.length - 5} erro(s).
+            </div>
+          )}
+        </div>
+      )}
+      {error && <div style={styles.msgBox}>{error}</div>}
+      {success && <div style={{ ...styles.msgBox, background: "#f0fdf4", borderColor: "#4ade80", color: "#166534" }}>{success}</div>}
+
       {/* Botões */}
       <div style={styles.submitRow}>
         <button style={styles.cancelBtn} onClick={handleLimpar}>
           Limpar
         </button>
-        <button style={styles.submitBtn} onClick={handleSubmit}>
-          ✅ Inserir orientador
+        <button style={styles.submitBtn} onClick={handleSubmit} disabled={isLoading}>
+          {isLoading ? "Enviando..." : "Inserir orientador"}
         </button>
       </div>
     </div>
@@ -180,7 +258,6 @@ export default function InserirOrientadorPage() {
 
 const styles: Record<string, CSSProperties> = {
   page: {
-    background: "#f0f4f8",
     minHeight: "100vh",
     padding: "32px 24px 48px",
     display: "flex",
@@ -258,6 +335,14 @@ const styles: Record<string, CSSProperties> = {
     fontWeight: 500,
     cursor: "pointer",
     whiteSpace: "nowrap",
+  },
+  msgBox: {
+    background: "#fef2f2",
+    border: "0.5px solid #f87171",
+    borderRadius: 8,
+    padding: "12px 16px",
+    fontSize: 13,
+    color: "#991b1b",
   },
   submitRow: {
     display: "flex",

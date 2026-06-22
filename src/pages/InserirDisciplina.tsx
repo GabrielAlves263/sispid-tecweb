@@ -1,5 +1,7 @@
 import { useState } from "react";
 import type { CSSProperties, ChangeEvent } from "react";
+import { inserirDisciplina } from "../services/disciplinaService";
+import { required } from "../utils/validators";
 
 interface FormData {
 	monitor: string;
@@ -38,6 +40,10 @@ function Field({
 }
 
 export default function InserirDisciplinaPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 	const [form, setForm] = useState<FormData>({
 		monitor: "",
 		codigoDisciplina: "",
@@ -48,8 +54,36 @@ export default function InserirDisciplinaPage() {
 		(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
 			setForm((f) => ({ ...f, [key]: e.target.value }));
 
-	const handleSubmit = () => {
-		console.log("Disciplina inserida:", form);
+	const validate = (): boolean => {
+		const errors: string[] = [];
+
+		const errMonitor = required(form.monitor, "Monitor");
+		if (errMonitor) errors.push(errMonitor);
+
+		const errCodigo = required(form.codigoDisciplina, "Código da disciplina");
+		if (errCodigo) errors.push(errCodigo);
+
+		setValidationErrors(errors);
+		return errors.length === 0;
+	};
+
+	const handleSubmit = async () => {
+		setSuccess(null);
+		setError(null);
+		setValidationErrors([]);
+
+		if (!validate()) return;
+
+		setIsLoading(true);
+
+		try {
+			await inserirDisciplina({ monitorId: form.monitor, codigoDisciplina: form.codigoDisciplina });
+			setSuccess("Disciplina inserida com sucesso!");
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "Erro ao inserir disciplina");
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	return (
@@ -84,6 +118,24 @@ export default function InserirDisciplinaPage() {
 				</div>
 			</div>
 
+			{validationErrors.length > 0 && (
+				<div style={styles.msgBox}>
+					<div style={{ fontWeight: 600, marginBottom: 6 }}>
+						{validationErrors.length} erro(s) encontrado(s):
+					</div>
+					{validationErrors.slice(0, 5).map((e, i) => (
+						<div key={i} style={{ marginLeft: 12 }}>&bull; {e}</div>
+					))}
+					{validationErrors.length > 5 && (
+						<div style={{ marginLeft: 12, marginTop: 4 }}>
+							e mais {validationErrors.length - 5} erro(s).
+						</div>
+					)}
+				</div>
+			)}
+			{error && <div style={styles.msgBox}>{error}</div>}
+			{success && <div style={{ ...styles.msgBox, background: "#f0fdf4", borderColor: "#4ade80", color: "#166534" }}>{success}</div>}
+
 			<div style={styles.submitRow}>
 				<button
 					style={styles.cancelBtn}
@@ -91,8 +143,8 @@ export default function InserirDisciplinaPage() {
 				>
 					Limpar
 				</button>
-				<button style={styles.submitBtn} onClick={handleSubmit}>
-					✅ Inserir disciplina
+				<button style={styles.submitBtn} onClick={handleSubmit} disabled={isLoading}>
+					{isLoading ? "Enviando..." : "Inserir disciplina"}
 				</button>
 			</div>
 		</div>
@@ -101,7 +153,6 @@ export default function InserirDisciplinaPage() {
 
 const styles: Record<string, CSSProperties> = {
 	page: {
-		background: "#f0f4f8",
 		minHeight: "100vh",
 		padding: "32px 24px 48px",
 		display: "flex",
@@ -163,6 +214,14 @@ const styles: Record<string, CSSProperties> = {
 		outline: "none",
 		width: "100%",
 		boxSizing: "border-box",
+	},
+	msgBox: {
+		background: "#fef2f2",
+		border: "0.5px solid #f87171",
+		borderRadius: 8,
+		padding: "12px 16px",
+		fontSize: 13,
+		color: "#991b1b",
 	},
 	submitRow: {
 		display: "flex",

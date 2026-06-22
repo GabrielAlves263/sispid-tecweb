@@ -21,8 +21,8 @@ interface NavItemConfig {
 
 interface SisPIDHeaderProps {
 	projectId?: string;
+	userName?: string;
 	onAction?: (action: string) => void;
-	onHelp?: () => void;
 	onInfo?: () => void;
 	onLogout?: () => void;
 }
@@ -70,8 +70,11 @@ const NAV_ITEMS: NavItemConfig[] = [
 			{
 				section: null,
 				items: [
-					{ label: "Opção de cadastro 1", action: "cadastrar-1" },
-					{ label: "Opção de cadastro 2", action: "cadastrar-2" },
+					{ label: "Desligamento", action: "desligamento-monitor" },
+					{ label: "Frequência", action: "frequencia-monitor" },
+					{ label: "Autorização de Acûmulo de atividades", action: "autorizacao-acumulo" },
+					{ label: "Relatorio anual", action: "relatorio-anual" },
+					{ label: "Relatorio do monitor", action: "relatorio-monitor" },
 				],
 			},
 		],
@@ -83,8 +86,34 @@ const NAV_ITEMS: NavItemConfig[] = [
 			{
 				section: null,
 				items: [
-					{ label: "Consulta 1", action: "consultar-1" },
-					{ label: "Consulta 2", action: "consultar-2" },
+					{ label: "Monitor", action: "consultar-monitor" },
+					{ label: "Disciplina", action: "consultar-disciplina" },
+					{ label: "Orientador", action: "consultar-orientador" },
+					{ label: "Frequência", action: "consultar-frequencia" },
+					{ label: "Desligamento", action: "consultar-desligamento" },
+					{ label: "Acúmulo", action: "consultar-acumulo" },
+					{ label: "Relatório Anual", action: "consultar-relatorio-anual" },
+					{ label: "Relatório do Monitor", action: "consultar-relatorio-monitor" },
+				],
+			},
+		],
+	},
+	{
+		label: "Imprimir comprovantes",
+		icon: "🖨️",
+		dropdown: [
+			{
+				section: null,
+				items: [
+					{ label: "Formulário do Monitor", action: "form-monitor" },
+					{ label: "Formulário de Frequência", action: "form-frequencia" },
+					{ label: "Formulário de Desligamento", action: "form-desligamento" },
+					{ label: "Formulário de Acúmulo", action: "form-acumulo" },
+					{ label: "Formulário Relatório Anual", action: "form-relatorio-anual" },
+					{ label: "Comprovante Relatório Anual", action: "comp-relatorio-anual" },
+					{ label: "Formulário Relatório do Monitor", action: "form-relatorio-monitor" },
+					{ label: "Certificado Monitor", action: "certificado-monitor" },
+					{ label: "Certificado Orientador", action: "certificado-orientador" },
 				],
 			},
 		],
@@ -196,8 +225,8 @@ function NavItem({ item, onSelect }: NavItemProps) {
 
 export default function SisPIDHeader({
 	projectId = "PID202619432",
+	userName,
 	onAction,
-	onHelp,
 	onInfo,
 	onLogout,
 }: SisPIDHeaderProps) {
@@ -212,11 +241,11 @@ export default function SisPIDHeader({
 					</span>
 				</div>
 				<div style={styles.topBarActions}>
-					<button style={styles.topBarBtn} onClick={onHelp}>
-						❓ Ajuda
-					</button>
+					{userName && (
+						<span style={styles.userName}>👤 {userName}</span>
+					)}
 					<button style={styles.topBarBtn} onClick={onInfo}>
-						ℹ️ Informações
+						ℹ️ Ajuda/Informações
 					</button>
 					<button
 						style={{ ...styles.topBarBtn, color: "#f08080" }}
@@ -241,16 +270,7 @@ export default function SisPIDHeader({
 					))}
 				</div>
 
-				<div style={styles.navRight}>
-					<button
-						style={{ ...styles.navBtn, color: "#1a6bb5" }}
-						onClick={() => onAction?.("imprimir-comprovantes")}
-						onMouseEnter={(e) => (e.currentTarget.style.background = "#e6f1fb")}
-						onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-					>
-						🖨️ Imprimir comprovantes ▾
-					</button>
-				</div>
+				<div style={styles.navRight} />
 			</nav>
 		</header>
 	);
@@ -293,6 +313,12 @@ const styles: Record<string, CSSProperties> = {
 		display: "flex",
 		alignItems: "center",
 		gap: 12,
+	},
+	userName: {
+		fontSize: 13,
+		color: "rgba(255,255,255,0.85)",
+		padding: "4px 12px",
+		fontWeight: 500,
 	},
 	topBarBtn: {
 		background: "none",

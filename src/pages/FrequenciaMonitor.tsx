@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { CSSProperties, ChangeEvent } from "react";
+import { inserirFrequencia } from "../services/frequenciaService";
 
 interface FormData {
 	referencia: string;
@@ -49,8 +50,11 @@ function Field({
 }
 
 export default function FrequenciaMensalMonitorPage() {
+	const [isLoading, setIsLoading] = useState(false);
+	const [success, setSuccess] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>(null);
 	const [form, setForm] = useState<FormData>({
-		referencia: "04/2026",
+		referencia: "06/2026",
 		monitor: "",
 		declaracao: false,
 	});
@@ -65,9 +69,24 @@ export default function FrequenciaMensalMonitorPage() {
 
 	const isValid = form.referencia !== "" && form.monitor !== "" && form.declaracao;
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		if (!isValid) return;
-		console.log("Frequência inserida:", form);
+		setSuccess(null);
+		setError(null);
+		setIsLoading(true);
+
+		try {
+			await inserirFrequencia({
+				referencia: form.referencia,
+				monitorId: form.monitor,
+				declaracao: form.declaracao,
+			});
+			setSuccess("Frequência inserida com sucesso!");
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "Erro ao inserir frequência");
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	return (
@@ -123,6 +142,9 @@ export default function FrequenciaMensalMonitorPage() {
 				</label>
 			</div>
 
+			{error && <div style={styles.msgBox}>{error}</div>}
+			{success && <div style={{ ...styles.msgBox, background: "#f0fdf4", borderColor: "#4ade80", color: "#166534" }}>{success}</div>}
+
 			<div style={styles.submitRow}>
 				<button
 					style={styles.cancelBtn}
@@ -135,12 +157,12 @@ export default function FrequenciaMensalMonitorPage() {
 				<button
 					style={{
 						...styles.submitBtn,
-						...(isValid ? {} : styles.submitBtnDisabled),
+						...(isValid && !isLoading ? {} : styles.submitBtnDisabled),
 					}}
 					onClick={handleSubmit}
-					disabled={!isValid}
+					disabled={!isValid || isLoading}
 				>
-					✅ Inserir
+					{isLoading ? "Enviando..." : "Inserir"}
 				</button>
 			</div>
 		</div>
@@ -149,7 +171,6 @@ export default function FrequenciaMensalMonitorPage() {
 
 const styles: Record<string, CSSProperties> = {
 	page: {
-		background: "#f0f4f8",
 		minHeight: "100vh",
 		padding: "32px 24px 48px",
 		display: "flex",
@@ -240,6 +261,14 @@ const styles: Record<string, CSSProperties> = {
 		fontSize: 12.5,
 		lineHeight: 1.5,
 		color: "#445b73",
+	},
+	msgBox: {
+		background: "#fef2f2",
+		border: "0.5px solid #f87171",
+		borderRadius: 8,
+		padding: "12px 16px",
+		fontSize: 13,
+		color: "#991b1b",
 	},
 	submitRow: {
 		display: "flex",

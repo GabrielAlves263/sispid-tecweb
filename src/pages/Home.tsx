@@ -6,32 +6,23 @@ interface StatCard {
 	label: string;
 	description: string;
 	delay: number;
+	href?: string;
 }
 
 const CARDS: StatCard[] = [
 	{
-		icon: "👤",
-		label: "Monitores",
-		description: "Gerencie monitores remunerados e voluntários",
-		delay: 100,
+		icon: "📖",
+		label: "Manual do Sistema",
+		description: "Leia o manual completo do SisPID",
+		delay: 500,
+		href: "#",
 	},
 	{
-		icon: "📚",
-		label: "Disciplinas",
-		description: "Cadastre e acompanhe disciplinas monitoradas",
-		delay: 200,
-	},
-	{
-		icon: "🎓",
-		label: "Orientadores",
-		description: "Vincule orientadores aos projetos ativos",
-		delay: 300,
-	},
-	{
-		icon: "🖨️",
-		label: "Comprovantes",
-		description: "Emita comprovantes de participação",
-		delay: 400,
+		icon: "📅",
+		label: "Cronograma de Frequências",
+		description: "Veja o cronograma de envio das frequências mensais",
+		delay: 600,
+		href: "#",
 	},
 ];
 
@@ -44,26 +35,48 @@ function AnimatedCard({ card }: { card: StatCard }) {
 		return () => clearTimeout(timer);
 	}, [card.delay]);
 
-	return (
-		<div
-			style={{
-				...styles.card,
-				opacity: visible ? 1 : 0,
-				transform: visible
-					? hovered
-						? "translateY(-6px)"
-						: "translateY(0)"
-					: "translateY(24px)",
-				boxShadow: hovered
-					? "0 8px 24px rgba(26,58,92,0.13)"
-					: "0 2px 8px rgba(26,58,92,0.06)",
-			}}
-			onMouseEnter={() => setHovered(true)}
-			onMouseLeave={() => setHovered(false)}
-		>
+	const sharedStyles = {
+		...styles.card,
+		...(card.href ? { ...styles.cardLink, textDecoration: "none" } : {}),
+		opacity: visible ? 1 : 0,
+		transform: visible
+			? hovered
+				? "translateY(-6px)"
+				: "translateY(0)"
+			: "translateY(24px)",
+		boxShadow: hovered
+			? "0 8px 24px rgba(26,58,92,0.13)"
+			: "0 2px 8px rgba(26,58,92,0.06)",
+	};
+
+	const content = (
+		<>
 			<span style={styles.cardIcon}>{card.icon}</span>
 			<p style={styles.cardLabel}>{card.label}</p>
 			<p style={styles.cardDescription}>{card.description}</p>
+		</>
+	);
+
+	if (card.href) {
+		return (
+			<a
+				href={card.href}
+				style={sharedStyles}
+				onMouseEnter={() => setHovered(true)}
+				onMouseLeave={() => setHovered(false)}
+			>
+				{content}
+			</a>
+		);
+	}
+
+	return (
+		<div
+			style={sharedStyles}
+			onMouseEnter={() => setHovered(true)}
+			onMouseLeave={() => setHovered(false)}
+		>
+			{content}
 		</div>
 	);
 }
@@ -219,5 +232,13 @@ const styles: Record<string, CSSProperties> = {
 		fontSize: 13,
 		color: "#6b7f94",
 		lineHeight: 1.5,
+	},
+	cardLink: {
+		cursor: "pointer",
+		color: "inherit",
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+		textAlign: "center",
 	},
 };

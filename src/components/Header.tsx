@@ -73,7 +73,8 @@ const NAV_ITEMS: NavItemConfig[] = [
 					{ label: "Desligamento", action: "desligamento-monitor" },
 					{ label: "Frequência", action: "frequencia-monitor" },
 					{ label: "Autorização de Acûmulo de atividades", action: "autorizacao-acumulo" },
-					{ label: "Relatorio anual", action: "relatoria-anual" },
+					{ label: "Relatorio anual", action: "relatorio-anual" },
+					{ label: "Relatorio do monitor", action: "relatorio-monitor" },
 				],
 			},
 		],
@@ -85,8 +86,34 @@ const NAV_ITEMS: NavItemConfig[] = [
 			{
 				section: null,
 				items: [
-					{ label: "Consulta 1", action: "consultar-1" },
-					{ label: "Consulta 2", action: "consultar-2" },
+					{ label: "Monitor", action: "consultar-monitor" },
+					{ label: "Disciplina", action: "consultar-disciplina" },
+					{ label: "Orientador", action: "consultar-orientador" },
+					{ label: "Frequência", action: "consultar-frequencia" },
+					{ label: "Desligamento", action: "consultar-desligamento" },
+					{ label: "Acúmulo", action: "consultar-acumulo" },
+					{ label: "Relatório Anual", action: "consultar-relatorio-anual" },
+					{ label: "Relatório do Monitor", action: "consultar-relatorio-monitor" },
+				],
+			},
+		],
+	},
+	{
+		label: "Imprimir comprovantes",
+		icon: "🖨️",
+		dropdown: [
+			{
+				section: null,
+				items: [
+					{ label: "Formulário do Monitor", action: "form-monitor" },
+					{ label: "Formulário de Frequência", action: "form-frequencia" },
+					{ label: "Formulário de Desligamento", action: "form-desligamento" },
+					{ label: "Formulário de Acúmulo", action: "form-acumulo" },
+					{ label: "Formulário Relatório Anual", action: "form-relatorio-anual" },
+					{ label: "Comprovante Relatório Anual", action: "comp-relatorio-anual" },
+					{ label: "Formulário Relatório do Monitor", action: "form-relatorio-monitor" },
+					{ label: "Certificado Monitor", action: "certificado-monitor" },
+					{ label: "Certificado Orientador", action: "certificado-orientador" },
 				],
 			},
 		],
@@ -243,16 +270,7 @@ export default function SisPIDHeader({
 					))}
 				</div>
 
-				<div style={styles.navRight}>
-					<button
-						style={{ ...styles.navBtn, color: "#1a6bb5" }}
-						onClick={() => onAction?.("imprimir-comprovantes")}
-						onMouseEnter={(e) => (e.currentTarget.style.background = "#e6f1fb")}
-						onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-					>
-						🖨️ Imprimir comprovantes ▾
-					</button>
-				</div>
+				<div style={styles.navRight} />
 			</nav>
 		</header>
 	);

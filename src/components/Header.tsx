@@ -70,8 +70,10 @@ const NAV_ITEMS: NavItemConfig[] = [
 			{
 				section: null,
 				items: [
-					{ label: "Opção de cadastro 1", action: "cadastrar-1" },
-					{ label: "Opção de cadastro 2", action: "cadastrar-2" },
+					{ label: "Desligamento", action: "desligamento-monitor" },
+					{ label: "Frequência", action: "frequencia-monitor" },
+					{ label: "Autorização de Acûmulo de atividades", action: "autorizacao-acumulo" },
+					{ label: "Relatorio anual", action: "relatoria-anual" },
 				],
 			},
 		],

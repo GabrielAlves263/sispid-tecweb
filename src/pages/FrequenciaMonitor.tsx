@@ -162,7 +162,7 @@ export default function FrequenciaMensalMonitorPage() {
 					onClick={handleSubmit}
 					disabled={!isValid || isLoading}
 				>
-					{isLoading ? "Enviando..." : "✅ Inserir"}
+					{isLoading ? "Enviando..." : "Inserir"}
 				</button>
 			</div>
 		</div>

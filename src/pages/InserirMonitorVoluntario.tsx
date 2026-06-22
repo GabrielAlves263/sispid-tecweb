@@ -76,7 +76,7 @@ function FileUpload({
       <label style={styles.fileLabel}>{label}</label>
       <div style={styles.fileInputWrapper}>
         <label style={styles.fileBtn}>
-          📎 Escolher arquivo
+           Escolher arquivo
           <input
             type="file"
             accept=".pdf"
@@ -98,8 +98,8 @@ export default function InserirMonitorVoluntarioPage() {
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState<FormData>({
     matriculaConsulta: "",
-    periodoInicio: "2026-05-01",
-    periodoFim: "2026-11-30",
+    periodoInicio: "",
+    periodoFim: "",
     nrEdital: "",
     nome: "",
     matricula: "",
@@ -163,7 +163,7 @@ export default function InserirMonitorVoluntarioPage() {
               onChange={set("matriculaConsulta")}
             />
           </div>
-          <button style={styles.searchBtn}>🔍 Consultar</button>
+          <button style={styles.searchBtn}>Consultar</button>
         </div>
       </div>
 
@@ -299,7 +299,7 @@ export default function InserirMonitorVoluntarioPage() {
       {/* Botão enviar */}
       <div style={styles.submitRow}>
         <button style={styles.submitBtn} onClick={handleSubmit} disabled={isLoading}>
-          {isLoading ? "Enviando..." : "✅ Inserir monitor voluntário"}
+          {isLoading ? "Enviando..." : "Inserir monitor voluntário"}
         </button>
       </div>
     </div>
@@ -308,7 +308,6 @@ export default function InserirMonitorVoluntarioPage() {
 
 const styles: Record<string, CSSProperties> = {
   page: {
-    background: "#f0f4f8",
     minHeight: "100vh",
     padding: "32px 24px 48px",
     display: "flex",

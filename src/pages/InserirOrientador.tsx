@@ -120,7 +120,7 @@ export default function InserirOrientadorPage() {
             />
           </div>
           <button style={styles.searchBtn} onClick={handleConsultar}>
-            🔍 Consultar
+            Consultar
           </button>
         </div>
       </div>
@@ -197,7 +197,7 @@ export default function InserirOrientadorPage() {
           Limpar
         </button>
         <button style={styles.submitBtn} onClick={handleSubmit} disabled={isLoading}>
-          {isLoading ? "Enviando..." : "✅ Inserir orientador"}
+          {isLoading ? "Enviando..." : "Inserir orientador"}
         </button>
       </div>
     </div>
@@ -206,7 +206,6 @@ export default function InserirOrientadorPage() {
 
 const styles: Record<string, CSSProperties> = {
   page: {
-    background: "#f0f4f8",
     minHeight: "100vh",
     padding: "32px 24px 48px",
     display: "flex",

@@ -110,7 +110,7 @@ export default function InserirDisciplinaPage() {
 					Limpar
 				</button>
 				<button style={styles.submitBtn} onClick={handleSubmit} disabled={isLoading}>
-					{isLoading ? "Enviando..." : "✅ Inserir disciplina"}
+					{isLoading ? "Enviando..." : "Inserir disciplina"}
 				</button>
 			</div>
 		</div>
@@ -119,7 +119,6 @@ export default function InserirDisciplinaPage() {
 
 const styles: Record<string, CSSProperties> = {
 	page: {
-		background: "#f0f4f8",
 		minHeight: "100vh",
 		padding: "32px 24px 48px",
 		display: "flex",

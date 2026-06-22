@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { ChangeEvent } from "react";
 import { inserirMonitorRemunerado } from "../services/monitorService";
 import MonitorForm from "../components/MonitorForm";
@@ -48,6 +48,7 @@ export default function InserirMonitorRemuneradoPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const topRef = useRef<HTMLDivElement>(null);
   const [form, setForm] = useState<FormData>({
     matriculaConsulta: "",
     periodoInicio: "",
@@ -154,7 +155,10 @@ export default function InserirMonitorRemuneradoPage() {
     setError(null);
     setValidationErrors([]);
 
-    if (!validate()) return;
+    if (!validate()) {
+      setTimeout(() => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+      return;
+    }
 
     setIsLoading(true);
 
@@ -172,6 +176,7 @@ export default function InserirMonitorRemuneradoPage() {
 
   return (
     <>
+      <div ref={topRef} />
       {validationErrors.length > 0 && (
         <div style={{
           background: "#fef2f2",

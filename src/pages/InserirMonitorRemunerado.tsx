@@ -2,6 +2,13 @@ import { useState } from "react";
 import type { ChangeEvent } from "react";
 import { inserirMonitorRemunerado } from "../services/monitorService";
 import MonitorForm from "../components/MonitorForm";
+import {
+  required,
+  requiredFile,
+  isEmail,
+  isCpf,
+  isCep,
+} from "../utils/validators";
 
 interface FormData {
   matriculaConsulta: string;
@@ -40,6 +47,7 @@ export default function InserirMonitorRemuneradoPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [form, setForm] = useState<FormData>({
     matriculaConsulta: "",
     periodoInicio: "",
@@ -83,9 +91,71 @@ export default function InserirMonitorRemuneradoPage() {
   const setFile = (key: string) => (file: File | null) =>
     setForm((f) => ({ ...f, [key]: file }));
 
+  const validate = (): boolean => {
+    const errors: string[] = [];
+
+    const textFields: [string, string][] = [
+      ["nome", "Nome"],
+      ["matricula", "Matrícula"],
+      ["rg", "RG"],
+      ["dataNascimento", "Data de nascimento"],
+      ["curso", "Curso"],
+      ["codigoCurso", "Código do curso"],
+      ["telefone", "Telefone"],
+      ["periodoInicio", "Período — início"],
+      ["periodoFim", "Período — fim"],
+      ["nrEdital", "Nº do edital"],
+      ["rua", "Rua / Avenida"],
+      ["numero", "Número"],
+      ["bairro", "Bairro"],
+      ["cidade", "Cidade"],
+      ["estado", "Estado"],
+      ["cep", "CEP"],
+      ["atividades", "Atividades"],
+      ["nomeBanco", "Nome do Banco"],
+      ["agencia", "Agência"],
+      ["numeroConta", "Número da conta"],
+    ];
+
+    for (const [key, label] of textFields) {
+      const err = required(form[key as keyof typeof form] as string, label);
+      if (err) errors.push(err);
+    }
+
+    const emailErr = isEmail(form.email);
+    if (emailErr) errors.push(emailErr);
+
+    const cpfErr = isCpf(form.cpf);
+    if (cpfErr) errors.push(cpfErr);
+
+    const cepErr = isCep(form.cep);
+    if (cepErr) errors.push(cepErr);
+
+    const fileRules: [File | null, string][] = [
+      [form.extratoBancario, "Extrato Bancário"],
+      [form.termoCompromisso, "Termo de Compromisso"],
+      [form.declaracaoNegativaBolsa, "Declaração Negativa de Bolsa"],
+      [form.editalPublicado, "Edital Publicado na Unidade"],
+      [form.resultadoSelecao, "Resultado da Seleção do Monitor"],
+      [form.declaracaoAcumulo, "Declaração de Não Acúmulo ou Acúmulo de Atividades"],
+    ];
+
+    for (const [file, label] of fileRules) {
+      const err = requiredFile(file, label);
+      if (err) errors.push(err);
+    }
+
+    setValidationErrors(errors);
+    return errors.length === 0;
+  };
+
   const handleSubmit = async () => {
     setSuccess(null);
     setError(null);
+    setValidationErrors([]);
+
+    if (!validate()) return;
+
     setIsLoading(true);
 
     try {
@@ -101,7 +171,32 @@ export default function InserirMonitorRemuneradoPage() {
   };
 
   return (
-    <MonitorForm
+    <>
+      {validationErrors.length > 0 && (
+        <div style={{
+          background: "#fef2f2",
+          border: "0.5px solid #f87171",
+          borderRadius: 8,
+          padding: "12px 16px",
+          fontSize: 13,
+          color: "#991b1b",
+          maxWidth: 860,
+          margin: "20px auto 0px",
+        }}>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>
+            {validationErrors.length} erro(s) encontrado(s):
+          </div>
+          {validationErrors.slice(0, 5).map((e, i) => (
+            <div key={i} style={{ marginLeft: 12 }}>&bull; {e}</div>
+          ))}
+          {validationErrors.length > 5 && (
+            <div style={{ marginLeft: 12, marginTop: 4 }}>
+              e mais {validationErrors.length - 5} erro(s).
+            </div>
+          )}
+        </div>
+      )}
+      <MonitorForm
       title="Dados do monitor remunerado"
       submitLabel="Inserir monitor remunerado"
       isLoading={isLoading}
@@ -280,5 +375,6 @@ export default function InserirMonitorRemuneradoPage() {
         </div>
       </div>
     </MonitorForm>
+    </>
   );
 }

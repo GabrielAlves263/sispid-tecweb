@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { CSSProperties, ChangeEvent } from "react";
 import { inserirOrientador } from "../services/orientadorService";
+import { required, isEmail, isCpf } from "../utils/validators";
 
 interface FormData {
   cpfConsulta: string;
@@ -49,6 +50,7 @@ export default function InserirOrientadorPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [form, setForm] = useState<FormData>({
     cpfConsulta: "",
     monitor: "",
@@ -68,9 +70,40 @@ export default function InserirOrientadorPage() {
     console.log("Consultando CPF:", form.cpfConsulta);
   };
 
+  const validate = (): boolean => {
+    const errors: string[] = [];
+
+    const fields: [string, string][] = [
+      ["monitor", "Monitor"],
+      ["cpf", "CPF"],
+      ["nome", "Nome"],
+      ["email", "E-mail"],
+      ["telefone", "Telefone"],
+      ["unidadeAcademica", "Unidade acadêmica"],
+    ];
+
+    for (const [key, label] of fields) {
+      const err = required(form[key as keyof typeof form] as string, label);
+      if (err) errors.push(err);
+    }
+
+    const emailErr = isEmail(form.email);
+    if (emailErr) errors.push(emailErr);
+
+    const cpfErr = isCpf(form.cpf);
+    if (cpfErr) errors.push(cpfErr);
+
+    setValidationErrors(errors);
+    return errors.length === 0;
+  };
+
   const handleSubmit = async () => {
     setSuccess(null);
     setError(null);
+    setValidationErrors([]);
+
+    if (!validate()) return;
+
     setIsLoading(true);
 
     try {
@@ -192,6 +225,21 @@ export default function InserirOrientadorPage() {
       </div>
 
       {/* Mensagens */}
+      {validationErrors.length > 0 && (
+        <div style={styles.msgBox}>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>
+            {validationErrors.length} erro(s) encontrado(s):
+          </div>
+          {validationErrors.slice(0, 5).map((e, i) => (
+            <div key={i} style={{ marginLeft: 12 }}>&bull; {e}</div>
+          ))}
+          {validationErrors.length > 5 && (
+            <div style={{ marginLeft: 12, marginTop: 4 }}>
+              e mais {validationErrors.length - 5} erro(s).
+            </div>
+          )}
+        </div>
+      )}
       {error && <div style={styles.msgBox}>{error}</div>}
       {success && <div style={{ ...styles.msgBox, background: "#f0fdf4", borderColor: "#4ade80", color: "#166534" }}>{success}</div>}
 

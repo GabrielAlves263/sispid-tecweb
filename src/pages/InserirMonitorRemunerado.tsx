@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ChangeEvent } from "react";
-import { inserirMonitorVoluntario } from "../services/monitorService";
+import { inserirMonitorRemunerado } from "../services/monitorService";
 import MonitorForm from "../components/MonitorForm";
 
 interface FormData {
@@ -89,7 +89,7 @@ export default function InserirMonitorRemuneradoPage() {
     setIsLoading(true);
 
     try {
-      await inserirMonitorVoluntario(form);
+      await inserirMonitorRemunerado(form);
       setSuccess("Monitor remunerado inserido com sucesso!");
     } catch (err) {
       setError(

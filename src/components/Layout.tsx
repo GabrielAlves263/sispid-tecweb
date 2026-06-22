@@ -7,6 +7,8 @@ const ACTION_ROUTES: Record<string, string> = {
 	"dados-projeto": "/dados-projeto",
 	"inserir-remunerado": "/ins-mon-rem",
 	"inserir-voluntario": "/ins-mon-vol",
+	"atualizar-remunerado": "/atualizar-mon-rem",
+	"atualizar-voluntario": "/atualizar-mon-vol",
 	"inserir-disciplina": "/ins-disciplina",
 	"inserir-orientador": "/ins-orientador",
 	"desligamento-monitor": "/desligamento-monitor",

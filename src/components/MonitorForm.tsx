@@ -44,6 +44,8 @@ interface MonitorFormProps {
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => void;
   onSubmit: () => void;
+  onSearch?: () => void;
+  isSearching?: boolean;
   children?: React.ReactNode;
   fileUploads: FileUploadConfig[];
 }
@@ -113,6 +115,8 @@ export default function MonitorForm({
   form,
   onFieldChange,
   onSubmit,
+  onSearch,
+  isSearching,
   children,
   fileUploads,
 }: MonitorFormProps) {
@@ -131,7 +135,9 @@ export default function MonitorForm({
               onChange={onFieldChange("matriculaConsulta")}
             />
           </div>
-          <button style={styles.searchBtn}>Consultar</button>
+          <button style={styles.searchBtn} onClick={onSearch} disabled={isSearching}>
+            {isSearching ? "Buscando..." : "Consultar"}
+          </button>
         </div>
       </div>
 

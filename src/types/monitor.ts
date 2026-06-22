@@ -20,3 +20,9 @@ export interface MonitorVoluntarioRequest {
   cep: string
   atividades: string
 }
+
+export interface MonitorRemuneradoRequest extends MonitorVoluntarioRequest {
+  nomeBanco: string
+  agencia: string
+  numeroConta: string
+}

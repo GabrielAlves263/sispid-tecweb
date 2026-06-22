@@ -4,10 +4,11 @@ import SisPIDFooter from "./Footer";
 import { useAuth } from "../contexts/AuthContext";
 
 const ACTION_ROUTES: Record<string, string> = {
+	"dados-projeto": "/",
+	"inserir-remunerado": "/ins-mon-vol",
 	"inserir-voluntario": "/ins-mon-vol",
 	"inserir-disciplina": "/ins-disciplina",
 	"inserir-orientador": "/ins-orientador",
-	"dados-projeto": "/",
 	"desligamento-monitor": "/desligamento-monitor",
 	"frequencia-monitor": "/frequencia-monitor",
 };

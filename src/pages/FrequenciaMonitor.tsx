@@ -54,7 +54,7 @@ export default function FrequenciaMensalMonitorPage() {
 	const [success, setSuccess] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [form, setForm] = useState<FormData>({
-		referencia: "04/2026",
+		referencia: "06/2026",
 		monitor: "",
 		declaracao: false,
 	});
@@ -171,7 +171,6 @@ export default function FrequenciaMensalMonitorPage() {
 
 const styles: Record<string, CSSProperties> = {
 	page: {
-		background: "#f0f4f8",
 		minHeight: "100vh",
 		padding: "32px 24px 48px",
 		display: "flex",

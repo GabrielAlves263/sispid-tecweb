@@ -1,6 +1,7 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import SisPIDHeader from "./Header";
 import SisPIDFooter from "./Footer";
+import { useAuth } from "../contexts/AuthContext";
 
 const ACTION_ROUTES: Record<string, string> = {
 	"inserir-voluntario": "/ins-mon-vol",
@@ -13,6 +14,7 @@ const ACTION_ROUTES: Record<string, string> = {
 
 export function Layout() {
 	const navigate = useNavigate();
+	const { user, logout } = useAuth();
 
 	const handleAction = (action: string) => {
 		const route = ACTION_ROUTES[action];
@@ -22,7 +24,7 @@ export function Layout() {
 	};
 
 	const handleLogout = () => {
-		localStorage.removeItem("token");
+		logout();
 		navigate("/login");
 	};
 
@@ -37,6 +39,7 @@ export function Layout() {
 	return (
 		<>
 			<SisPIDHeader
+				userName={user?.nome}
 				onAction={handleAction}
 				onHelp={handleHelp}
 				onInfo={handleInfo}

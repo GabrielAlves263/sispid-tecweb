@@ -21,6 +21,7 @@ interface NavItemConfig {
 
 interface SisPIDHeaderProps {
 	projectId?: string;
+	userName?: string;
 	onAction?: (action: string) => void;
 	onHelp?: () => void;
 	onInfo?: () => void;
@@ -196,6 +197,7 @@ function NavItem({ item, onSelect }: NavItemProps) {
 
 export default function SisPIDHeader({
 	projectId = "PID202619432",
+	userName,
 	onAction,
 	onHelp,
 	onInfo,
@@ -212,6 +214,9 @@ export default function SisPIDHeader({
 					</span>
 				</div>
 				<div style={styles.topBarActions}>
+					{userName && (
+						<span style={styles.userName}>👤 {userName}</span>
+					)}
 					<button style={styles.topBarBtn} onClick={onHelp}>
 						❓ Ajuda
 					</button>
@@ -293,6 +298,12 @@ const styles: Record<string, CSSProperties> = {
 		display: "flex",
 		alignItems: "center",
 		gap: 12,
+	},
+	userName: {
+		fontSize: 13,
+		color: "rgba(255,255,255,0.85)",
+		padding: "4px 12px",
+		fontWeight: 500,
 	},
 	topBarBtn: {
 		background: "none",

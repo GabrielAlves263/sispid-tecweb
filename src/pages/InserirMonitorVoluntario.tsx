@@ -178,37 +178,37 @@ export default function InserirMonitorVoluntarioPage() {
             <input style={styles.input} type="date" value={form.periodoFim} onChange={set("periodoFim")} />
           </Field>
           <Field label="Nº do edital que selecionou o aluno na unidade" span={2}>
-            <input style={styles.input} type="text" value={form.nrEdital} onChange={set("nrEdital")} />
+            <input style={styles.input} type="text" placeholder="Número do edital" value={form.nrEdital} onChange={set("nrEdital")} />
           </Field>
 
           <Field label="Nome completo" span={2}>
-            <input style={styles.input} type="text" value={form.nome} onChange={set("nome")} />
+            <input style={styles.input} type="text" placeholder="Nome completo do monitor" value={form.nome} onChange={set("nome")} />
           </Field>
           <Field label="Matrícula" span={1}>
-            <input style={styles.input} type="text" value={form.matricula} onChange={set("matricula")} />
+            <input style={styles.input} type="text" placeholder="Número de matrícula" value={form.matricula} onChange={set("matricula")} />
           </Field>
           <Field label="Data de nascimento" span={1}>
             <input style={styles.input} type="date" value={form.dataNascimento} onChange={set("dataNascimento")} />
           </Field>
 
           <Field label="Curso" span={2}>
-            <input style={styles.input} type="text" value={form.curso} onChange={set("curso")} />
+            <input style={styles.input} type="text" placeholder="Nome do curso" value={form.curso} onChange={set("curso")} />
           </Field>
           <Field label="Código do curso" span={1}>
-            <input style={styles.input} type="text" value={form.codigoCurso} onChange={set("codigoCurso")} />
+            <input style={styles.input} type="text" placeholder="Ex: CK0196" value={form.codigoCurso} onChange={set("codigoCurso")} />
           </Field>
           <Field label="E-mail" span={1}>
-            <input style={styles.input} type="email" value={form.email} onChange={set("email")} />
+            <input style={styles.input} type="email" placeholder="monitor@email.com" value={form.email} onChange={set("email")} />
           </Field>
 
           <Field label="Telefone(s)" span={1}>
-            <input style={styles.input} type="text" value={form.telefone} onChange={set("telefone")} />
+            <input style={styles.input} type="text" placeholder="(00) 00000-0000" value={form.telefone} onChange={set("telefone")} />
           </Field>
           <Field label="RG" span={1}>
-            <input style={styles.input} type="text" value={form.rg} onChange={set("rg")} />
+            <input style={styles.input} type="text" placeholder="00.000.000-0" value={form.rg} onChange={set("rg")} />
           </Field>
           <Field label="CPF" span={1}>
-            <input style={styles.input} type="text" value={form.cpf} onChange={set("cpf")} />
+            <input style={styles.input} type="text" placeholder="000.000.000-00" value={form.cpf} onChange={set("cpf")} />
           </Field>
         </div>
       </div>
@@ -229,18 +229,18 @@ export default function InserirMonitorVoluntarioPage() {
             </select>
           </Field>
           <Field label="Cidade" span={2}>
-            <input style={styles.input} type="text" value={form.cidade} onChange={set("cidade")} />
+            <input style={styles.input} type="text" placeholder="Nome da cidade" value={form.cidade} onChange={set("cidade")} />
           </Field>
 
           <Field label="Bairro" span={2}>
-            <input style={styles.input} type="text" value={form.bairro} onChange={set("bairro")} />
+            <input style={styles.input} type="text" placeholder="Nome do bairro" value={form.bairro} onChange={set("bairro")} />
           </Field>
           <Field label="Rua / Avenida" span={2}>
-            <input style={styles.input} type="text" value={form.rua} onChange={set("rua")} />
+            <input style={styles.input} type="text" placeholder="Nome da rua ou avenida" value={form.rua} onChange={set("rua")} />
           </Field>
 
           <Field label="Número" span={1}>
-            <input style={styles.input} type="text" value={form.numero} onChange={set("numero")} />
+            <input style={styles.input} type="text" placeholder="Número" value={form.numero} onChange={set("numero")} />
           </Field>
           <Field label="Complemento" span={3}>
             <input style={styles.input} type="text" placeholder="Apto, bloco, etc." value={form.complemento} onChange={set("complemento")} />

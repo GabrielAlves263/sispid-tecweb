@@ -29,12 +29,8 @@ export function Layout() {
 		navigate("/login");
 	};
 
-	const handleHelp = () => {
-		alert("Ajuda - Em desenvolvimento");
-	};
-
 	const handleInfo = () => {
-		alert("Informações do sistema - Em desenvolvimento");
+		navigate("/")
 	};
 
 	return (
@@ -42,7 +38,6 @@ export function Layout() {
 			<SisPIDHeader
 				userName={user?.nome}
 				onAction={handleAction}
-				onHelp={handleHelp}
 				onInfo={handleInfo}
 				onLogout={handleLogout}
 			/>

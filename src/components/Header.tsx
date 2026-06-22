@@ -23,7 +23,6 @@ interface SisPIDHeaderProps {
 	projectId?: string;
 	userName?: string;
 	onAction?: (action: string) => void;
-	onHelp?: () => void;
 	onInfo?: () => void;
 	onLogout?: () => void;
 }
@@ -199,7 +198,6 @@ export default function SisPIDHeader({
 	projectId = "PID202619432",
 	userName,
 	onAction,
-	onHelp,
 	onInfo,
 	onLogout,
 }: SisPIDHeaderProps) {
@@ -217,11 +215,8 @@ export default function SisPIDHeader({
 					{userName && (
 						<span style={styles.userName}>👤 {userName}</span>
 					)}
-					<button style={styles.topBarBtn} onClick={onHelp}>
-						❓ Ajuda
-					</button>
 					<button style={styles.topBarBtn} onClick={onInfo}>
-						ℹ️ Informações
+						ℹ️ Ajuda/Informações
 					</button>
 					<button
 						style={{ ...styles.topBarBtn, color: "#f08080" }}

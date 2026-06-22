@@ -153,6 +153,7 @@ export default function InserirOrientadorPage() {
             <input
               style={styles.input}
               type="text"
+              placeholder="Nome completo do orientador"
               value={form.nome}
               onChange={set("nome")}
             />
@@ -162,6 +163,7 @@ export default function InserirOrientadorPage() {
             <input
               style={styles.input}
               type="email"
+              placeholder="orientador@email.com"
               value={form.email}
               onChange={set("email")}
             />
@@ -171,6 +173,7 @@ export default function InserirOrientadorPage() {
             <input
               style={styles.input}
               type="text"
+              placeholder="(00) 00000-0000"
               value={form.telefone}
               onChange={set("telefone")}
             />
@@ -180,6 +183,7 @@ export default function InserirOrientadorPage() {
             <input
               style={styles.input}
               type="text"
+              placeholder="Ex: Centro de Ciências"
               value={form.unidadeAcademica}
               onChange={set("unidadeAcademica")}
             />

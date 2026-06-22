@@ -25,7 +25,12 @@ interface FormData {
   estado: string;
   cep: string;
   atividades: string;
+  nomeBanco: string;
+  agencia: string;
+  numeroConta: string;
+  extratoBancario: File | null;
   termoCompromisso: File | null;
+  declaracaoNegativaBolsa: File | null;
   editalPublicado: File | null;
   resultadoSelecao: File | null;
   declaracaoAcumulo: File | null;
@@ -87,7 +92,7 @@ function FileUpload({
   );
 }
 
-export default function InserirMonitorVoluntarioPage() {
+export default function InserirMonitorRemuneradoPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -113,7 +118,12 @@ export default function InserirMonitorVoluntarioPage() {
     estado: "",
     cep: "",
     atividades: "",
+    nomeBanco: "",
+    agencia: "",
+    numeroConta: "",
+    extratoBancario: null,
     termoCompromisso: null,
+    declaracaoNegativaBolsa: null,
     editalPublicado: null,
     resultadoSelecao: null,
     declaracaoAcumulo: null,
@@ -133,7 +143,7 @@ export default function InserirMonitorVoluntarioPage() {
 
     try {
       await inserirMonitorVoluntario(form);
-      setSuccess("Monitor voluntário inserido com sucesso!");
+      setSuccess("Monitor remunerado inserido com sucesso!");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao inserir monitor");
     } finally {
@@ -145,7 +155,7 @@ export default function InserirMonitorVoluntarioPage() {
     <div style={styles.page}>
       {/* Busca por matrícula */}
       <div style={styles.card}>
-        <SectionTitle>Dados do monitor voluntário</SectionTitle>
+        <SectionTitle>Dados do monitor remunerado</SectionTitle>
 
         <div style={styles.searchRow}>
           <div style={styles.field}>
@@ -260,14 +270,40 @@ export default function InserirMonitorVoluntarioPage() {
         </div>
       </div>
 
+      {/* Dados Bancários */}
+      <div style={styles.card}>
+        <SectionTitle>Dados Bancários</SectionTitle>
+        <div style={styles.grid}>
+          <Field label="Nome do Banco" span={2}>
+            <input style={styles.input} type="text" placeholder="Nome do banco" value={form.nomeBanco} onChange={set("nomeBanco")} />
+          </Field>
+          <Field label="Agência" span={1}>
+            <input style={styles.input} type="text" placeholder="0000-0" value={form.agencia} onChange={set("agencia")} />
+          </Field>
+          <Field label="Número da conta" span={1}>
+            <input style={styles.input} type="text" placeholder="000000-0" value={form.numeroConta} onChange={set("numeroConta")} />
+          </Field>
+        </div>
+      </div>
+
       {/* Anexos */}
       <div style={styles.card}>
         <SectionTitle>Anexos (somente PDF)</SectionTitle>
         <div style={styles.fileList}>
           <FileUpload
+            label="Extrato Bancário"
+            value={form.extratoBancario}
+            onChange={setFile("extratoBancario")}
+          />
+          <FileUpload
             label="Termo de Compromisso"
             value={form.termoCompromisso}
             onChange={setFile("termoCompromisso")}
+          />
+          <FileUpload
+            label="Declaração Negativa de Bolsa"
+            value={form.declaracaoNegativaBolsa}
+            onChange={setFile("declaracaoNegativaBolsa")}
           />
           <FileUpload
             label="Edital Publicado na Unidade"
@@ -294,7 +330,7 @@ export default function InserirMonitorVoluntarioPage() {
       {/* Botão enviar */}
       <div style={styles.submitRow}>
         <button style={styles.submitBtn} onClick={handleSubmit} disabled={isLoading}>
-          {isLoading ? "Enviando..." : "Inserir monitor voluntário"}
+          {isLoading ? "Enviando..." : "Inserir monitor remunerado"}
         </button>
       </div>
     </div>

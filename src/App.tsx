@@ -9,6 +9,7 @@ import InserirOrientadorPage from "./pages/InserirOrientador";
 import DesligamentoMonitorPage from "./pages/DesligamentoMonitor";
 import FrequenciaMensal from "./pages/FrequenciaMonitor";
 import DadosProjetoPage from "./pages/DadosProjeto";
+import InserirMonitorRemuneradoPage from "./pages/InserirMonitorRemunerado";
 
 export default function App() {
 	return (
@@ -19,6 +20,7 @@ export default function App() {
 					<Route path="/" element={<HomePage />} />
 					<Route path="/dados-projeto" element={<DadosProjetoPage />} />
 					<Route path="/ins-mon-vol" element={<InserirMonitorVoluntarioPage />} />
+					<Route path="/ins-mon-rem" element={<InserirMonitorRemuneradoPage />} />
 					<Route path="/ins-disciplina" element={<InserirDisciplinaPage />} />
 					<Route path="/ins-orientador" element={<InserirOrientadorPage />} />
 					<Route path="/desligamento-monitor" element={<DesligamentoMonitorPage />} />

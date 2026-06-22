@@ -58,8 +58,9 @@ export default function DesligamentoMonitorPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [form, setForm] = useState<FormData>({
-    dataDesligamento: "2026-03-31",
+    dataDesligamento: "",
     monitor: "",
     tipo: "",
     motivo: "",
@@ -74,6 +75,7 @@ export default function DesligamentoMonitorPage() {
     setForm({ dataDesligamento: "2026-03-31", monitor: "", tipo: "", motivo: "" });
 
   const handleSubmit = async () => {
+    setShowConfirmModal(false);
     setSuccess(null);
     setError(null);
     setIsLoading(true);
@@ -157,17 +159,37 @@ export default function DesligamentoMonitorPage() {
         <button style={styles.cancelBtn} onClick={handleLimpar}>
           Limpar
         </button>
-        <button style={styles.submitBtn} onClick={handleSubmit} disabled={isLoading}>
-          {isLoading ? "Enviando..." : "✅ Confirmar desligamento"}
+        <button style={styles.submitBtn} onClick={() => setShowConfirmModal(true)} disabled={isLoading}>
+          {isLoading ? "Enviando..." : "Confirmar desligamento"}
         </button>
       </div>
+
+      {/* Modal de confirmação */}
+      {showConfirmModal && (
+        <div style={styles.overlay}>
+          <div style={styles.modal}>
+            <div style={styles.modalIcon}>⚠️</div>
+            <h3 style={styles.modalTitle}>Confirmar desligamento</h3>
+            <p style={styles.modalText}>
+              Tem certeza que deseja desligar este monitor? Esta ação é irreversível.
+            </p>
+            <div style={styles.modalActions}>
+              <button style={styles.cancelBtn} onClick={() => setShowConfirmModal(false)}>
+                Cancelar
+              </button>
+              <button style={styles.submitBtn} onClick={handleSubmit}>
+                Sim, confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 const styles: Record<string, CSSProperties> = {
   page: {
-    background: "#f0f4f8",
     minHeight: "100vh",
     padding: "32px 24px 48px",
     display: "flex",
@@ -265,6 +287,45 @@ const styles: Record<string, CSSProperties> = {
     fontSize: 13,
     color: "#7a5c00",
     lineHeight: 1.5,
+  },
+  overlay: {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0,0,0,0.45)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1000,
+  },
+  modal: {
+    background: "#fff",
+    borderRadius: 16,
+    padding: "32px 36px",
+    maxWidth: 420,
+    width: "90%",
+    textAlign: "center",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.18)",
+  },
+  modalIcon: {
+    fontSize: 36,
+    marginBottom: 12,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 700,
+    color: "#1a3a5c",
+    margin: "0 0 8px",
+  },
+  modalText: {
+    fontSize: 14,
+    color: "#6b7f94",
+    lineHeight: 1.5,
+    margin: "0 0 24px",
+  },
+  modalActions: {
+    display: "flex",
+    justifyContent: "center",
+    gap: 12,
   },
   msgBox: {
     background: "#fef2f2",

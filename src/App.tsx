@@ -12,6 +12,7 @@ import DadosProjetoPage from "./pages/DadosProjeto";
 import InserirMonitorRemuneradoPage from "./pages/InserirMonitorRemunerado";
 import AtualizarMonitorVoluntarioPage from "./pages/AtualizarMonitorVoluntario";
 import AtualizarMonitorRemuneradoPage from "./pages/AtualizarMonitorRemunerado";
+import AutorizacaoAcumuloPage from "./pages/AutorizacaoAcumulo";
 
 export default function App() {
 	return (
@@ -27,6 +28,7 @@ export default function App() {
 					<Route path="/atualizar-mon-rem" element={<AtualizarMonitorRemuneradoPage />} />
 					<Route path="/ins-disciplina" element={<InserirDisciplinaPage />} />
 					<Route path="/ins-orientador" element={<InserirOrientadorPage />} />
+					<Route path="/autorizacao-acumulo" element={<AutorizacaoAcumuloPage />} />
 					<Route path="/desligamento-monitor" element={<DesligamentoMonitorPage />} />
 					<Route path="/frequencia-monitor" element={<FrequenciaMensal />} />
 				</Route>

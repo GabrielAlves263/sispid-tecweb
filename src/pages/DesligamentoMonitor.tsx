@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import type { CSSProperties, ChangeEvent } from "react";
+import { FiAlertTriangle } from "react-icons/fi";
 import { inserirDesligamento } from "../services/desligamentoService";
 import { required } from "../utils/validators";
 
@@ -175,7 +176,9 @@ export default function DesligamentoMonitorPage() {
 
       {/* Aviso */}
       <div style={styles.warning}>
-        <span style={styles.warningIcon}>⚠️</span>
+        <span style={styles.warningIcon}>
+          <FiAlertTriangle />
+        </span>
         <span style={styles.warningText}>
           Esta ação é irreversível. Após a inserção, o monitor será desligado do projeto a partir da data informada.
         </span>
@@ -215,7 +218,9 @@ export default function DesligamentoMonitorPage() {
       {showConfirmModal && (
         <div style={styles.overlay}>
           <div style={styles.modal}>
-            <div style={styles.modalIcon}>⚠️</div>
+            <div style={styles.modalIcon}>
+              <FiAlertTriangle />
+            </div>
             <h3 style={styles.modalTitle}>Confirmar desligamento</h3>
             <p style={styles.modalText}>
               Tem certeza que deseja desligar este monitor? Esta ação é irreversível.
@@ -326,9 +331,13 @@ const styles: Record<string, CSSProperties> = {
     padding: "12px 16px",
   },
   warningIcon: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
     fontSize: 16,
     flexShrink: 0,
     marginTop: 1,
+    color: "#b45309",
   },
   warningText: {
     fontSize: 13,
@@ -354,7 +363,15 @@ const styles: Record<string, CSSProperties> = {
     boxShadow: "0 8px 32px rgba(0,0,0,0.18)",
   },
   modalIcon: {
-    fontSize: 36,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 64,
+    height: 64,
+    borderRadius: "50%",
+    fontSize: 28,
+    color: "#b45309",
+    background: "#fff7ed",
     marginBottom: 12,
   },
   modalTitle: {

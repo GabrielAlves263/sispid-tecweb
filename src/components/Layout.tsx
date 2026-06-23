@@ -11,6 +11,7 @@ const ACTION_ROUTES: Record<string, string> = {
 	"atualizar-voluntario": "/atualizar-mon-vol",
 	"inserir-disciplina": "/ins-disciplina",
 	"inserir-orientador": "/ins-orientador",
+	"autorizacao-acumulo": "/autorizacao-acumulo",
 	"desligamento-monitor": "/desligamento-monitor",
 	"frequencia-monitor": "/frequencia-monitor",
 };

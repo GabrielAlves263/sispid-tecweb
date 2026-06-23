@@ -1,5 +1,19 @@
 import { useState, useRef, useEffect } from "react";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import {
+	FiAward,
+	FiBookOpen,
+	FiEdit3,
+	FiFileText,
+	FiFolder,
+	FiInfo,
+	FiLogOut,
+	FiPlus,
+	FiPrinter,
+	FiSearch,
+	FiUser,
+	FiUsers,
+} from "react-icons/fi";
 
 interface DropdownItem {
 	label: string;
@@ -14,7 +28,8 @@ interface DropdownGroup {
 
 interface NavItemConfig {
 	label: string;
-	icon: string;
+	icon: ReactNode;
+	iconColor: string;
 	action?: string;
 	dropdown?: DropdownGroup[];
 }
@@ -30,12 +45,14 @@ interface SisPIDHeaderProps {
 const NAV_ITEMS: NavItemConfig[] = [
 	{
 		label: "Dados do projeto",
-		icon: "📄",
+		icon: <FiFileText />,
+		iconColor: "#1a6bb5",
 		action: "dados-projeto",
 	},
 	{
 		label: "Monitores",
-		icon: "👤",
+		icon: <FiUsers />,
+		iconColor: "#1a3a5c",
 		dropdown: [
 			{
 				section: "Remunerado",
@@ -61,11 +78,22 @@ const NAV_ITEMS: NavItemConfig[] = [
 			},
 		],
 	},
-	{ label: "Inserir disciplina", icon: "📚", action: "inserir-disciplina" },
-	{ label: "Inserir orientador", icon: "🎓", action: "inserir-orientador" },
+	{
+		label: "Inserir disciplina",
+		icon: <FiBookOpen />,
+		iconColor: "#1a6bb5",
+		action: "inserir-disciplina",
+	},
+	{
+		label: "Inserir orientador",
+		icon: <FiAward />,
+		iconColor: "#1a6bb5",
+		action: "inserir-orientador",
+	},
 	{
 		label: "Cadastrar",
-		icon: "📝",
+		icon: <FiEdit3 />,
+		iconColor: "#1a3a5c",
 		dropdown: [
 			{
 				section: null,
@@ -81,7 +109,8 @@ const NAV_ITEMS: NavItemConfig[] = [
 	},
 	{
 		label: "Consultar",
-		icon: "🔍",
+		icon: <FiSearch />,
+		iconColor: "#1a3a5c",
 		dropdown: [
 			{
 				section: null,
@@ -100,7 +129,8 @@ const NAV_ITEMS: NavItemConfig[] = [
 	},
 	{
 		label: "Imprimir comprovantes",
-		icon: "🖨️",
+		icon: <FiPrinter />,
+		iconColor: "#1a3a5c",
 		dropdown: [
 			{
 				section: null,
@@ -150,7 +180,9 @@ function Dropdown({ groups, onSelect }: DropdownProps) {
 							}}
 						>
 							{item.highlight && (
-								<span style={{ marginRight: 6, fontSize: 12 }}>＋</span>
+								<span style={styles.dropdownItemIcon}>
+									<FiPlus />
+								</span>
 							)}
 							{item.label}
 						</button>
@@ -242,16 +274,27 @@ export default function SisPIDHeader({
 				</div>
 				<div style={styles.topBarActions}>
 					{userName && (
-						<span style={styles.userName}>👤 {userName}</span>
+						<span style={styles.userName}>
+							<span style={styles.inlineIcon}>
+								<FiUser />
+							</span>
+							{userName}
+						</span>
 					)}
 					<button style={styles.topBarBtn} onClick={onInfo}>
-						ℹ️ Ajuda/Informações
+						<span style={styles.topBarBtnContent}>
+							<FiInfo />
+							Ajuda/Informações
+						</span>
 					</button>
 					<button
 						style={{ ...styles.topBarBtn, color: "#f08080" }}
 						onClick={onLogout}
 					>
-						🚪 Sair
+						<span style={styles.topBarBtnContent}>
+							<FiLogOut />
+							Sair
+						</span>
 					</button>
 				</div>
 			</div>
@@ -259,7 +302,12 @@ export default function SisPIDHeader({
 			{/* Project bar */}
 			<div style={styles.projectBar}>
 				<span style={styles.projectLabel}>Projeto ativo</span>
-				<span style={styles.projectBadge}>📁 {projectId}</span>
+				<span style={styles.projectBadge}>
+					<span style={styles.projectBadgeIcon}>
+						<FiFolder />
+					</span>
+					{projectId}
+				</span>
 			</div>
 
 			{/* Nav bar */}
@@ -393,6 +441,13 @@ const styles: Record<string, CSSProperties> = {
 		borderRadius: 0,
 		transition: "background 0.15s, color 0.15s",
 	},
+		navIcon: {
+			display: "inline-flex",
+			alignItems: "center",
+			justifyContent: "center",
+			fontSize: 14,
+			flexShrink: 0,
+		},
 	navBtnActive: {
 		background: "#f0f4f8",
 		color: "#1a3a5c",
@@ -444,6 +499,34 @@ const styles: Record<string, CSSProperties> = {
 		color: "#1a6bb5",
 		fontWeight: 500,
 	},
+		dropdownItemIcon: {
+			display: "inline-flex",
+			alignItems: "center",
+			justifyContent: "center",
+			fontSize: 12,
+			marginRight: 8,
+			color: "#1a6bb5",
+		},
+		inlineIcon: {
+			display: "inline-flex",
+			alignItems: "center",
+			justifyContent: "center",
+			fontSize: 13,
+			color: "rgba(255,255,255,0.82)",
+		},
+		topBarBtnContent: {
+			display: "inline-flex",
+			alignItems: "center",
+			gap: 6,
+		},
+		projectBadgeIcon: {
+			display: "inline-flex",
+			alignItems: "center",
+			justifyContent: "center",
+			fontSize: 12,
+			marginRight: 6,
+			color: "#1a6bb5",
+		},
 	dropdownDivider: {
 		height: 0.5,
 		background: "#d0dbe8",

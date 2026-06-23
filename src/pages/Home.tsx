@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { FiBookOpen, FiCalendar } from "react-icons/fi";
 
 interface StatCard {
-	icon: string;
+	icon: ReactNode;
+	iconColor: string;
 	label: string;
 	description: string;
 	delay: number;
@@ -11,14 +13,16 @@ interface StatCard {
 
 const CARDS: StatCard[] = [
 	{
-		icon: "📖",
+		icon: <FiBookOpen />,
+		iconColor: "#1a6bb5",
 		label: "Manual do Sistema",
 		description: "Leia o manual completo do SisPID",
 		delay: 500,
 		href: "#",
 	},
 	{
-		icon: "📅",
+		icon: <FiCalendar />,
+		iconColor: "#1a3a5c",
 		label: "Cronograma de Frequências",
 		description: "Veja o cronograma de envio das frequências mensais",
 		delay: 600,
@@ -51,7 +55,7 @@ function AnimatedCard({ card }: { card: StatCard }) {
 
 	const content = (
 		<>
-			<span style={styles.cardIcon}>{card.icon}</span>
+			<span style={{ ...styles.cardIcon, color: card.iconColor }}>{card.icon}</span>
 			<p style={styles.cardLabel}>{card.label}</p>
 			<p style={styles.cardDescription}>{card.description}</p>
 		</>
@@ -218,8 +222,15 @@ const styles: Record<string, CSSProperties> = {
 		transition: "opacity 0.5s ease, transform 0.4s ease, box-shadow 0.25s ease",
 	},
 	cardIcon: {
-		fontSize: 32,
+		display: "inline-flex",
+		alignItems: "center",
+		justifyContent: "center",
+		width: 56,
+		height: 56,
+		fontSize: 28,
 		marginBottom: 12,
+		borderRadius: "50%",
+		background: "linear-gradient(180deg, rgba(26,106,181,0.12), rgba(26,58,92,0.08))",
 	},
 	cardLabel: {
 		margin: "0 0 6px",

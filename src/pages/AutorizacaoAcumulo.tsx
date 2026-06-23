@@ -1,7 +1,6 @@
 import { useState } from "react";
 import type { CSSProperties, ChangeEvent } from "react";
 import {
-	FiAlertTriangle,
 	FiCalendar,
 	FiCheckCircle,
 	FiClock,

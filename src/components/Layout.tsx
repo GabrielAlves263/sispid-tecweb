@@ -12,8 +12,18 @@ const ACTION_ROUTES: Record<string, string> = {
 	"inserir-disciplina": "/ins-disciplina",
 	"inserir-orientador": "/ins-orientador",
 	"autorizacao-acumulo": "/autorizacao-acumulo",
+	"relatorio-anual": "/relatorio-anual",
+	"relatorio-monitor": "/relatorio-monitor",
 	"desligamento-monitor": "/desligamento-monitor",
 	"frequencia-monitor": "/frequencia-monitor",
+	"consultar-monitor": "/consultar-monitor",
+	"consultar-disciplina": "/consultar-disciplina",
+	"consultar-orientador": "/consultar-orientador",
+	"consultar-frequencia": "/consultar-frequencia",
+	"consultar-desligamento": "/consultar-desligamento",
+	"consultar-acumulo": "/consultar-acumulo",
+	"consultar-relatorio-anual": "/consultar-relatorio-anual",
+	"consultar-relatorio-monitor": "/consultar-relatorio-monitor",
 };
 
 export function Layout() {

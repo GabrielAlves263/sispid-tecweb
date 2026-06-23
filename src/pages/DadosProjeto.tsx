@@ -81,7 +81,7 @@ export default function DadosProjetoPage() {
             <input
               style={styles.input}
               type="text"
-              value="DANILLO FERNANDES DO NASCIMENTO"
+              value=""
               readOnly
             />
           </Field>

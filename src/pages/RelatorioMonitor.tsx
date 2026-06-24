@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { FiUploadCloud, FiAlertTriangle } from "react-icons/fi";
+import type { CSSProperties, ChangeEvent } from "react";
+import { FiUploadCloud, FiAlertTriangle, FiCheckCircle } from "react-icons/fi";
+import { required } from "../utils/validators";
 
 interface FormData {
 	monitor: string;
@@ -7,10 +9,37 @@ interface FormData {
 	arquivo: File | null;
 }
 
+function SectionTitle({ children }: { children: string }) {
+	return (
+		<div style={styles.sectionTitle}>
+			<span style={styles.sectionTitleText}>{children}</span>
+			<div style={styles.sectionTitleLine} />
+		</div>
+	);
+}
+
+function Field({
+	label,
+	span = 1,
+	children,
+}: {
+	label: string;
+	span?: number;
+	children: React.ReactNode;
+}) {
+	return (
+		<div style={{ ...styles.field, gridColumn: `span ${span}` }}>
+			<label style={styles.label}>{label}</label>
+			{children}
+		</div>
+	);
+}
+
 function RelatorioMonitorPage() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [validationErrors, setValidationErrors] = useState<string[]>([]);
 	const [form, setForm] = useState<FormData>({
 		monitor: "",
 		conceito: "",
@@ -20,7 +49,7 @@ function RelatorioMonitorPage() {
 
 	const set =
 		(key: keyof FormData) =>
-		(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+		(e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
 			if (key === "arquivo" && e.target instanceof HTMLInputElement) {
 				const files = e.target.files;
 				if (files && files[0]) {
@@ -41,21 +70,38 @@ function RelatorioMonitorPage() {
 		setFileName("Nenhum arquivo escolhido");
 		setSuccess(null);
 		setError(null);
+		setValidationErrors([]);
+	};
+
+	const validate = (): boolean => {
+		const errors: string[] = [];
+		const fields: [string, string][] = [
+			[form.monitor, "Monitor"],
+			[form.conceito, "Conceito"],
+		];
+		for (const [value, label] of fields) {
+			const err = required(value, label);
+			if (err) errors.push(err);
+		}
+		if (!form.arquivo) {
+			errors.push("Arquivo do relatório é obrigatório.");
+		}
+		setValidationErrors(errors);
+		return errors.length === 0;
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+		setSuccess(null);
+		setError(null);
+		setValidationErrors([]);
 
-		if (!form.monitor || !form.conceito || !form.arquivo) {
-			setError("Por favor, preencha todos os campos e selecione um arquivo.");
+		if (!validate()) {
 			return;
 		}
 
 		setIsLoading(true);
-		setSuccess(null);
-		setError(null);
 
-		// Simular envio para backend
 		setTimeout(() => {
 			setSuccess("Relatório do monitor inserido com sucesso!");
 			setIsLoading(false);
@@ -64,148 +110,180 @@ function RelatorioMonitorPage() {
 	};
 
 	return (
-		<div style={styles.container}>
-			<h1 style={styles.title}>RELATÓRIO DE AVALIAÇÃO DO(A) MONITOR(A)</h1>
+		<div style={styles.page}>
+			<div style={styles.headerBlock}>
+				<h1 style={styles.pageTitle}>RELATÓRIO DE AVALIAÇÃO DO(A) MONITOR(A)</h1>
+				<p style={styles.pageSubtitle}>
+					Formulário para envio do relatório de avaliação do monitor.
+				</p>
+			</div>
 
-			{success && <div style={styles.successBox}>{success}</div>}
-			{error && <div style={styles.errorBox}>{error}</div>}
+			<div style={styles.card}>
+				<SectionTitle>Dados do relatório</SectionTitle>
 
-			<form onSubmit={handleSubmit}>
-				<div style={styles.grid}>
-					<Field label="Monitor:">
-						<select
-							style={styles.input}
-							value={form.monitor}
-							onChange={set("monitor")}
+				<form onSubmit={handleSubmit}>
+					<div style={styles.grid}>
+						<Field label="Monitor:" span={1}>
+							<select
+								style={styles.input}
+								value={form.monitor}
+								onChange={set("monitor")}
+							>
+								<option value="">Selecione um monitor</option>
+								<option value="monitor1">Monitor 1</option>
+								<option value="monitor2">Monitor 2</option>
+								<option value="monitor3">Monitor 3</option>
+							</select>
+						</Field>
+
+						<Field label="Conceito:" span={1}>
+							<select
+								style={styles.input}
+								value={form.conceito}
+								onChange={set("conceito")}
+							>
+								<option value="">Selecione um conceito</option>
+								<option value="A">A</option>
+								<option value="B">B</option>
+								<option value="C">C</option>
+								<option value="D">D</option>
+							</select>
+						</Field>
+					</div>
+
+					<div style={styles.fileSection}>
+						<SectionTitle>Anexar relatório do monitor</SectionTitle>
+						<div style={styles.fileUpload}>
+							<label style={styles.fileLabel}>
+								<FiUploadCloud style={styles.uploadIcon} />
+								<input
+									type="file"
+									style={styles.fileInput}
+									onChange={set("arquivo")}
+									accept=".pdf,.doc,.docx,.xlsx,.txt"
+								/>
+							</label>
+							<span style={styles.fileName}>{fileName}</span>
+						</div>
+					</div>
+
+					<div style={styles.observations}>
+						<div style={styles.obsBox}>
+							<FiAlertTriangle style={styles.obsIcon} />
+							<span>
+								<strong>OBS:</strong> Incluir relatório e resumo do EID em um único arquivo.
+							</span>
+						</div>
+						<div style={styles.obsBox}>
+							<FiAlertTriangle style={styles.obsIcon} />
+							<span>
+								<strong>OBS2:</strong> É preciso desligar o monitor antes de enviar o relatório
+							</span>
+						</div>
+					</div>
+
+					<div style={styles.actions}>
+						<button
+							type="button"
+							onClick={handleClear}
+							style={styles.cancelBtn}
+							disabled={isLoading}
 						>
-							<option value="">Selecione um monitor</option>
-							<option value="monitor1">Monitor 1</option>
-							<option value="monitor2">Monitor 2</option>
-							<option value="monitor3">Monitor 3</option>
-						</select>
-					</Field>
-
-					<Field label="Conceito:">
-						<select
-							style={styles.input}
-							value={form.conceito}
-							onChange={set("conceito")}
+							Limpar
+						</button>
+						<button
+							type="submit"
+							style={styles.submitBtn}
+							disabled={isLoading}
 						>
-							<option value="">Selecione um conceito</option>
-							<option value="A">A</option>
-							<option value="B">B</option>
-							<option value="C">C</option>
-							<option value="D">D</option>
-						</select>
-					</Field>
-				</div>
-
-				<div style={styles.fileSection}>
-					<h3 style={styles.sectionTitle}>Anexar o relatório do monitor:</h3>
-					<div style={styles.fileUpload}>
-						<label style={styles.fileLabel}>
-							<FiUploadCloud style={styles.uploadIcon} />
-							<input
-								type="file"
-								style={styles.fileInput}
-								onChange={set("arquivo")}
-								accept=".pdf,.doc,.docx,.xlsx,.txt"
-							/>
-						</label>
-						<span style={styles.fileName}>{fileName}</span>
+							{isLoading ? "Enviando..." : "Enviar"}
+						</button>
 					</div>
-				</div>
+				</form>
+			</div>
 
-				<div style={styles.observations}>
-					<div style={styles.obsBox}>
-						<FiAlertTriangle style={styles.obsIcon} />
-						<span>
-							<strong>OBS:</strong> Incluir relatório e resumo do EID em um único arquivo.
-						</span>
+			{validationErrors.length > 0 && (
+				<div style={styles.msgBox}>
+					<div style={{ fontWeight: 600, marginBottom: 6 }}>
+						{validationErrors.length} erro(s) encontrado(s):
 					</div>
-					<div style={styles.obsBox}>
-						<FiAlertTriangle style={styles.obsIcon} />
-						<span>
-							<strong>OBS2:</strong> É preciso desligar o monitor antes de enviar o relatório
-						</span>
-					</div>
+					{validationErrors.slice(0, 5).map((message, index) => (
+						<div key={index} style={{ marginLeft: 12 }}>
+							&bull; {message}
+						</div>
+					))}
 				</div>
-
-				<div style={styles.buttonGroup}>
-					<button
-						type="button"
-						onClick={handleClear}
-						style={styles.buttonClear}
-						disabled={isLoading}
-					>
-						Limpar
-					</button>
-					<button
-						type="submit"
-						style={styles.buttonSubmit}
-						disabled={isLoading}
-					>
-						{isLoading ? "Enviando..." : "Inserir"}
-					</button>
+			)}
+			{error && <div style={styles.msgBox}>{error}</div>}
+			{success && (
+				<div style={{ ...styles.msgBox, background: "#f0fdf4", borderColor: "#4ade80", color: "#166534" }}>
+					<span style={styles.successIcon}><FiCheckCircle /></span>
+					{success}
 				</div>
-			</form>
+			)}
 		</div>
 	);
 }
 
-function Field({
-	label,
-	children,
-}: {
-	label: string;
-	children: React.ReactNode;
-}) {
-	return (
-		<div style={styles.field}>
-			<label style={styles.label}>{label}</label>
-			{children}
-		</div>
-	);
-}
-
-const styles: Record<string, React.CSSProperties> = {
-	container: {
-		maxWidth: 800,
-		margin: "0 auto",
-		padding: 24,
-		backgroundColor: "#ffffff",
-		borderRadius: 8,
-		boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+const styles: Record<string, CSSProperties> = {
+	page: {
+		minHeight: "calc(100vh - 120px)",
+		padding: "32px 24px 48px",
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+		gap: 20,
+		fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+		background: "linear-gradient(180deg, #f6f9fc 0%, #eef3f8 100%)",
 	},
-	title: {
+	headerBlock: {
+		textAlign: "center",
+		maxWidth: 980,
+	},
+	pageTitle: {
 		fontSize: 24,
 		fontWeight: 700,
 		color: "#1a3a5c",
-		marginBottom: 24,
-		textAlign: "center",
+		margin: 0,
+		letterSpacing: "0.03em",
 	},
-	successBox: {
-		padding: 12,
-		marginBottom: 16,
-		backgroundColor: "#d1fae5",
-		color: "#065f46",
-		borderRadius: 6,
+	pageSubtitle: {
+		margin: "8px 0 0",
 		fontSize: 14,
-		border: "1px solid #a7f3d0",
+		color: "#6b7f94",
 	},
-	errorBox: {
-		padding: 12,
-		marginBottom: 16,
-		backgroundColor: "#fee2e2",
-		color: "#991b1b",
-		borderRadius: 6,
-		fontSize: 14,
-		border: "1px solid #fecaca",
+	card: {
+		width: "100%",
+		maxWidth: 980,
+		background: "#fff",
+		border: "0.5px solid #d0dbe8",
+		borderRadius: 12,
+		padding: "24px 28px 28px",
+		boxShadow: "0 8px 30px rgba(26,58,92,0.05)",
+	},
+	sectionTitle: {
+		display: "flex",
+		alignItems: "center",
+		gap: 12,
+		marginBottom: 22,
+	},
+	sectionTitleText: {
+		fontSize: 13,
+		fontWeight: 700,
+		color: "#1a3a5c",
+		letterSpacing: "0.06em",
+		textTransform: "uppercase",
+		whiteSpace: "nowrap",
+	},
+	sectionTitleLine: {
+		flex: 1,
+		height: 1,
+		background: "#d0dbe8",
 	},
 	grid: {
 		display: "grid",
 		gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-		gap: 16,
+		gap: "16px 20px",
 		marginBottom: 24,
 	},
 	field: {
@@ -219,25 +297,19 @@ const styles: Record<string, React.CSSProperties> = {
 		color: "#6b7f94",
 	},
 	input: {
-		padding: "8px 12px",
-		fontSize: 14,
-		border: "1px solid #d0dbe8",
-		borderRadius: 4,
-		backgroundColor: "#f8fafc",
+		height: 38,
+		padding: "0 12px",
+		border: "0.5px solid #d0dbe8",
+		borderRadius: 8,
+		fontSize: 13,
 		color: "#1a3a5c",
-		fontFamily: "inherit",
-		transition: "border-color 0.2s",
+		background: "#f8fafc",
+		outline: "none",
+		width: "100%",
+		boxSizing: "border-box",
 	},
 	fileSection: {
 		marginBottom: 24,
-		paddingBottom: 16,
-		borderBottom: "1px solid #d0dbe8",
-	},
-	sectionTitle: {
-		fontSize: 14,
-		fontWeight: 600,
-		color: "#6b7f94",
-		marginBottom: 12,
 	},
 	fileUpload: {
 		display: "flex",
@@ -246,7 +318,7 @@ const styles: Record<string, React.CSSProperties> = {
 		padding: 16,
 		backgroundColor: "#f8fafc",
 		border: "2px dashed #d0dbe8",
-		borderRadius: 6,
+		borderRadius: 8,
 	},
 	fileLabel: {
 		display: "flex",
@@ -291,32 +363,50 @@ const styles: Record<string, React.CSSProperties> = {
 		marginTop: 2,
 		flexShrink: 0,
 	},
-	buttonGroup: {
+	actions: {
 		display: "flex",
+		justifyContent: "center",
 		gap: 12,
-		justifyContent: "flex-end",
 	},
-	buttonClear: {
-		padding: "10px 20px",
-		fontSize: 14,
-		fontWeight: 600,
+	cancelBtn: {
+		height: 42,
+		padding: "0 22px",
+		background: "#fff",
 		color: "#6b7f94",
-		backgroundColor: "#f0f4f9",
-		border: "1px solid #d0dbe8",
-		borderRadius: 4,
-		cursor: "pointer",
-		transition: "background-color 0.2s",
-	},
-	buttonSubmit: {
-		padding: "10px 20px",
-		fontSize: 14,
+		border: "0.5px solid #d0dbe8",
+		borderRadius: 8,
+		fontSize: 13,
 		fontWeight: 600,
-		color: "#ffffff",
-		backgroundColor: "#1a6bb5",
-		border: "none",
-		borderRadius: 4,
 		cursor: "pointer",
-		transition: "background-color 0.2s",
+	},
+	submitBtn: {
+		height: 42,
+		padding: "0 28px",
+		background: "#1a6bb5",
+		color: "#fff",
+		border: "none",
+		borderRadius: 8,
+		fontSize: 13,
+		fontWeight: 700,
+		cursor: "pointer",
+		boxShadow: "0 6px 16px rgba(26,107,181,0.18)",
+	},
+	msgBox: {
+		width: "100%",
+		maxWidth: 980,
+		background: "#fef2f2",
+		border: "0.5px solid #f87171",
+		borderRadius: 8,
+		padding: "12px 16px",
+		fontSize: 13,
+		color: "#991b1b",
+	},
+	successIcon: {
+		display: "inline-flex",
+		alignItems: "center",
+		justifyContent: "center",
+		marginRight: 8,
+		fontSize: 14,
 	},
 };
 

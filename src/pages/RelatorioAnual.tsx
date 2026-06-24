@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { CSSProperties, ChangeEvent } from "react";
 import { FiCheckCircle } from "react-icons/fi";
+import { required } from "../utils/validators";
 
 interface FormData {
 	numeroProjeto: string;
@@ -81,6 +82,7 @@ export default function RelatorioAnualPage() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [validationErrors, setValidationErrors] = useState<string[]>([]);
 	const [form, setForm] = useState<FormData>(INITIAL_FORM);
 
 	const set =
@@ -94,9 +96,45 @@ export default function RelatorioAnualPage() {
 		setError(null);
 	};
 
+	const validate = (): boolean => {
+		const errors: string[] = [];
+		const fields: [string, string][] = [
+			[form.numeroProjeto, "Número do Projeto"],
+			[form.tituloProjeto, "Título do Projeto"],
+			[form.cpfProfessor, "CPF do Professor"],
+			[form.professor, "Professor"],
+			[form.unidadeAcademica, "Unidade Acadêmica"],
+			[form.regimeTrabalho, "Regime de Trabalho"],
+			[form.dedicacaoExclusiva, "Dedicação Exclusiva"],
+			[form.situacao, "Situação"],
+			[form.qtdRemunerados, "Qtd Monitores Remunerados"],
+			[form.qtdVoluntarios, "Qtd Monitores Voluntários"],
+			[form.resumosEid, "Quantidade de Resumos Inscritos no EID"],
+			[form.trabalhosInscritos, "Trabalhos Inscritos no EID"],
+			[form.atividadesPrevistas, "Atividades Previstas"],
+			[form.atividadesRealizadas, "Atividades Realizadas"],
+			[form.dificuldades, "Dificuldades na Execução"],
+			[form.avaliacaoInstrumentos, "Avaliação dos Instrumentos"],
+			[form.reflexaoParticipacao, "Reflexão sobre a Participação"],
+			[form.contribuicoesSugestoes, "Contribuições e Sugestões"],
+		];
+		for (const [value, label] of fields) {
+			const err = required(value, label);
+			if (err) errors.push(err);
+		}
+		setValidationErrors(errors);
+		return errors.length === 0;
+	};
+
 	const handleSubmit = () => {
 		setSuccess(null);
 		setError(null);
+		setValidationErrors([]);
+
+		if (!validate()) {
+			return;
+		}
+
 		setIsLoading(true);
 
 		window.setTimeout(() => {
@@ -215,6 +253,18 @@ export default function RelatorioAnualPage() {
 				</div>
 			</div>
 
+			{validationErrors.length > 0 && (
+				<div style={styles.msgBox}>
+					<div style={{ fontWeight: 600, marginBottom: 6 }}>
+						{validationErrors.length} erro(s) encontrado(s):
+					</div>
+					{validationErrors.slice(0, 5).map((message, index) => (
+						<div key={index} style={{ marginLeft: 12 }}>
+							&bull; {message}
+						</div>
+					))}
+				</div>
+			)}
 			{error && <div style={styles.msgBox}>{error}</div>}
 			{success && (
 				<div style={{ ...styles.msgBox, background: "#f0fdf4", borderColor: "#4ade80", color: "#166534" }}>
